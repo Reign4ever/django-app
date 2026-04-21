@@ -19,4 +19,7 @@ class BlogPostRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = BlogPostSerializer
     lookup_field = "pk"
 
+def index(request):
+    return render(request, 'index.html')
+
 # Create your views here.
