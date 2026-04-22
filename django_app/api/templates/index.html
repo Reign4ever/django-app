@@ -4,120 +4,121 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Radio+Canada:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+    /* CSS Variables */
+    :root {
+        --surface-0: #f5f5f5;
+        --surface-1: #ffffff;
+        --accent: hsl(220, 90%, 56%);
+        --text-1: #222222;
+    }
 
-        .form-container {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 24px;
-            color: #333333;
-            font-size: 24px;
-        }
+    body {
+        font-family: "Radio Canada", sans-serif;
+        font-size: 1.125rem;
+        line-height: 1.6;
+        background-color: var(--surface-0);
+        color: var(--text-1);
+        padding-block-start: 10vb;
+    }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+    h1 {
+        font-size: 4rem;
+        font-weight: 300;
+        line-height: 1;
+        margin-bottom: 1.5rem;
+    }
 
-        label {
-            display: block;
-            margin-bottom: 6px;
-            color: #555555;
-            font-size: 14px;
-            font-weight: bold;
-        }
+    a {
+        color: hsl(from var(--accent) h s 80%);
+    }
 
-        input {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #cccccc;
-            border-radius: 4px;
-            font-size: 14px;
-            color: #333333;
-            transition: border-color 0.2s;
-        }
+    label {
+        text-transform: uppercase;
+        font-size: 1rem;
+    }
 
-        input:focus {
-            outline: none;
-            border-color: #4a90e2;
-        }
+    .fine-print {
+        font-size: 0.925rem;
+        text-transform: revert;
+        line-height: 1.4;
+    }
 
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #4a90e2;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
+    .contact-form {
+        display: grid;
+        gap: 1rem;
+        background-color: var(--surface-1);
+        padding: 3rem;
+        border-radius: 24px;
+        width: min(100% - 4rem, 1200px);
+        margin-inline: auto;
+    }
 
-        button:hover {
-            background-color: #357abd;
-        }
+    input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #cccccc;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: "Radio Canada", sans-serif;
+        color: var(--text-1);
+    }
 
-        .login-link {
-            text-align: center;
-            margin-top: 16px;
-            font-size: 14px;
-            color: #555555;
-        }
+    input:focus {
+        outline: none;
+        border-color: var(--accent);
+    }
 
-        .login-link a {
-            color: #4a90e2;
-            text-decoration: none;
-        }
+    button {
+        cursor: pointer;
+        background-color: var(--accent);
+        color: var(--text-1);
+        padding: 1em 1.5em;
+        border: 0;
+        border-radius: 16px;
+    }
 
-        .login-link a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    button:hover,
+    button:focus-visible {
+        background-color: hsl(from var(--accent) h s 30%);
+    }
+
+    .login-link {
+        font-size: 0.925rem;
+        text-align: center;
+        color: var(--text-1);
+    }
+</style>    
 </head>
 <body>
-    <div class="form-container">
-        <h1>Create Account</h1>
-        <form method="POST" action="/api/register/">
+        <form class="contact-form" method="POST" action="/api/register/">
             {% csrf_token %}
-            <div class="form-group">
+            <h1>Create Account</h1>
+
                 <label for="name">Full Name</label>
                 <input type="text" id="name" name="name" placeholder="Enter your full name" required>
-            </div>
-            <div class="form-group">
+        
                 <label for="email">Email Address</label>
                 <input type="email" id="email" name="email" placeholder="Enter your email" required>
-            </div>
-            <div class="form-group">
+            
                 <label for="phone">Phone Number</label>
                 <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
-            </div>
+            
             <button type="submit">Sign Up</button>
-        </form>
-        <div class="login-link">
+    
+         <p class="fine-print login-link">
             Already have an account? <a href="/login/">Log in</a>
-        </div>
-    </div>
+         </p>
+    </form>         
 </body>
 </html>
