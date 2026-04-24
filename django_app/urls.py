@@ -23,3 +23,4 @@ urlpatterns = [
     path('api/', include('django_app.api.urls')),
     path('', RedirectView.as_view(url='/api/')),
 ]
+

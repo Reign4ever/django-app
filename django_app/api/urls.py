@@ -1,8 +1,8 @@
-from django.urls import path 
+from django.urls import path
 from . import views
 
 urlpatterns = [
     path("", views.index, name="index"),
-    path("blogposts/", views.BlogPostListCreate.as_view(), name="blogpost-view-create"),
-    path("blogposts/<int:pk>/", views.BlogPostRetrieveUpdateDestroy.as_view(), name="update",),
+    path("users/", views.UserProfileListCreate.as_view(), name="user-view-create"),
+    path("users/<int:pk>/", views.UserProfileRetrieveUpdateDestroy.as_view(), name="update"),
 ]
