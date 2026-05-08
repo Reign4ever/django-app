@@ -10,7 +10,7 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.name
     
-    class Event(models.Model):
+class Event(models.Model):
     user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='events')
     title = models.CharField(max_length=255)
     date = models.DateField()
