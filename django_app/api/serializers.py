@@ -9,4 +9,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        fields = ['id', 'user', 'title', 'date', 'time', 'description', 'created_at']
+        fields = ['id', 'title', 'date', 'time', 'description', 'created_at']
