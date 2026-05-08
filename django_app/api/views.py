@@ -27,10 +27,10 @@ class EventListCreate(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Event.objects.filter(user=self.request.user.userprofile)
+        return Event.objects.all()
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user.userprofile)
+        serializer.save()
 
 
 class EventRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
