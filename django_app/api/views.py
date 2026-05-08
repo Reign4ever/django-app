@@ -3,7 +3,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from .models import UserProfile, Event
 from .serializers import UserProfileSerializer, EventSerializer
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny
 
 class UserProfileListCreate(generics.ListCreateAPIView):
     queryset = UserProfile.objects.all()
