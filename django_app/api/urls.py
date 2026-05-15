@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     path("register/", views.RegisterView.as_view(), name="register"),
     path("", views.index, name="index"),
+    path("debug/", views.debug_events, name="debug"),
     path("users/", views.UserProfileListCreate.as_view(), name="user-view-create"),
     path("users/<int:pk>/", views.UserProfileRetrieveUpdateDestroy.as_view(), name="update"),
     path("events/", views.EventListCreate.as_view(), name="event-list-create"),

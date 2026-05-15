@@ -57,6 +57,14 @@ class UserProfileRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
 def index(request):
     return render(request, 'index.html')
 
+def debug_events(request):
+    from django.http import JsonResponse
+    from django.db import connection
+    cursor = connection.cursor()
+    cursor.execute("SELECT column_name FROM information_schema.columns WHERE table_name='api_event'")
+    columns = [row[0] for row in cursor.fetchall()]
+    return JsonResponse({"columns": columns})
+
 
 class EventListCreate(generics.ListCreateAPIView):
     serializer_class = EventSerializer
