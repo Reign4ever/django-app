@@ -3,122 +3,617 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
-
+    <title>MyApp</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Radio+Canada:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Radio+Canada:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-    /* CSS Variables */
     :root {
-        --surface-0: #000000;
-        --surface-1: #1a1a1a;
-        --accent: hsl(220, 90%, 56%);
-        --text-1: #ffffff;
+        --bg-dark: #0d0d14;
+        --surface: #1a1a2e;
+        --card: #16213e;
+        --accent-blue: #4a9eff;
+        --accent-pink: #ff6b9d;
+        --accent-cyan: #00d4ff;
+        --accent-green: #00ff88;
+        --accent-red: #ff4757;
+        --accent-purp: #7c5cbf;
+        --text: #ffffff;
+        --text-dim: #8888aa;
     }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
         font-family: "Radio Canada", sans-serif;
-        font-size: 1.125rem;
-        line-height: 1.6;
-        background-color: var(--surface-0);
-        color: var(--text-1);
-        padding-block-start: 10vb;
+        background-color: var(--bg-dark);
+        color: var(--text);
+        min-height: 100vh;
     }
 
-    h1 {
-        font-size: 4rem;
-        font-weight: 300;
-        line-height: 1;
-        margin-bottom: 1.5rem;
-    }
+    /* ── SCREENS ── */
+    .screen { display: none; min-height: 100vh; }
+    .screen.active { display: flex; }
 
-    a {
-        color: hsl(from var(--accent) h s 80%);
+    /* ── AUTH SCREENS ── */
+    .auth-screen {
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
     }
-
-    label {
-        text-transform: uppercase;
-        font-size: 1rem;
-    }
-
-    .fine-print {
-        font-size: 0.925rem;
-        text-transform: revert;
-        line-height: 1.4;
-    }
-
-    .contact-form {
+    .auth-card {
+        background: var(--surface);
+        border-radius: 24px;
+        padding: 3rem;
+        width: min(100%, 480px);
         display: grid;
         gap: 1rem;
-        background-color: var(--surface-1);
-        padding: 3rem;
-        border-radius: 24px;
-        width: min(100% - 4rem, 1200px);
-        margin-inline: auto;
     }
-
+    .auth-card h1 {
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin-bottom: 0.25rem;
+    }
+    .auth-card p {
+        color: var(--text-dim);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+    label {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-dim);
+    }
     input {
         width: 100%;
-        padding: 10px 14px;
-        border: 1px solid #cccccc;
-        border-radius: 8px;
+        padding: 12px 16px;
+        background: var(--card);
+        border: 1px solid #2a2a4a;
+        border-radius: 10px;
         font-size: 1rem;
         font-family: "Radio Canada", sans-serif;
-        color: var(--text-1);
+        color: var(--text);
+        transition: border-color 0.2s;
     }
-
     input:focus {
         outline: none;
-        border-color: var(--accent);
+        border-color: var(--accent-blue);
     }
-
-    button {
+    .btn {
         cursor: pointer;
-        background-color: var(--accent);
-        color: var(--text-1);
-        padding: 1em 1.5em;
+        padding: 14px 20px;
         border: 0;
-        border-radius: 16px;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-family: "Radio Canada", sans-serif;
+        font-weight: 500;
+        color: var(--text);
+        transition: opacity 0.2s, transform 0.1s;
     }
-
-    button:hover,
-    button:focus-visible {
-        background-color: hsl(from var(--accent) h s 30%);
+    .btn:hover { opacity: 0.85; }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary { background: var(--accent-blue); }
+    .btn-secondary { background: #2a2a4a; }
+    .btn-danger { background: var(--accent-red); }
+    .btn-purple { background: var(--accent-purp); }
+    .btn-sm {
+        padding: 8px 14px;
+        font-size: 0.85rem;
+        border-radius: 8px;
     }
-
-    .login-link {
-        font-size: 0.925rem;
+    .status {
+        font-size: 0.9rem;
+        min-height: 1.4em;
         text-align: center;
-        color: var(--text-1);
     }
-</style>    
+    .status.error { color: var(--accent-red); }
+    .status.success { color: var(--accent-green); }
+    .status.info { color: var(--accent-cyan); }
+    .link-row {
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--text-dim);
+    }
+    .link-row a {
+        color: var(--accent-blue);
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* ── DASHBOARD ── */
+    .dashboard-screen {
+        flex-direction: column;
+    }
+    .topbar {
+        background: var(--surface);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #2a2a4a;
+    }
+    .topbar h2 {
+        font-size: 1.2rem;
+        font-weight: 500;
+        color: var(--accent-cyan);
+    }
+    .topbar-right { display: flex; gap: 0.75rem; align-items: center; }
+    .username-badge {
+        font-size: 0.85rem;
+        color: var(--text-dim);
+    }
+    .main-content {
+        padding: 2rem;
+        max-width: 800px;
+        margin: 0 auto;
+        width: 100%;
+    }
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    .section-header h3 {
+        font-size: 1.4rem;
+        font-weight: 400;
+    }
+    .event-card {
+        background: var(--surface);
+        border-radius: 16px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        border: 1px solid #2a2a4a;
+        transition: border-color 0.2s;
+    }
+    .event-card:hover { border-color: #4a4a6a; }
+    .event-info { flex: 1; }
+    .event-title {
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+    .event-datetime {
+        font-size: 0.85rem;
+        color: var(--accent-cyan);
+        margin-bottom: 0.25rem;
+    }
+    .event-desc {
+        font-size: 0.85rem;
+        color: var(--text-dim);
+    }
+    .event-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+    .no-events {
+        text-align: center;
+        color: var(--text-dim);
+        padding: 3rem;
+        font-size: 0.95rem;
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.7);
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+        padding: 1rem;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+        background: var(--surface);
+        border-radius: 20px;
+        padding: 2rem;
+        width: min(100%, 480px);
+        display: grid;
+        gap: 1rem;
+    }
+    .modal h3 { font-size: 1.4rem; font-weight: 400; }
+    .modal-actions { display: flex; gap: 0.75rem; }
+    .modal-actions .btn { flex: 1; }
+
+    /* ── LOADING ── */
+    .loading { text-align: center; color: var(--text-dim); padding: 2rem; }
+</style>
 </head>
 <body>
-        <form class="contact-form" method="POST" action="/api/register/">
-            {% csrf_token %}
-            <h1>Create Account</h1>
 
-                <label for="name">Full Name</label>
-                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
-        
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
-            
-                <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
-            
-            <button type="submit">Sign Up</button>
-    
-         <p class="fine-print login-link">
-            Already have an account? <a href="/login/">Log in</a>
-         </p>
-    </form>         
+<!-- ── LOGIN SCREEN ── -->
+<div class="screen auth-screen active" id="screen-login">
+    <div class="auth-card">
+        <div>
+            <h1>Welcome Back</h1>
+            <p>Sign in to continue</p>
+        </div>
+        <div>
+            <label for="login-username">Username</label>
+            <input type="text" id="login-username" placeholder="Enter your username" tabindex="1" autocomplete="username">
+        </div>
+        <div>
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="Enter your password" tabindex="2" autocomplete="current-password">
+        </div>
+        <div class="status" id="login-status"></div>
+        <button class="btn btn-primary" tabindex="3" onclick="doLogin()">Sign In</button>
+        <div class="link-row">
+            Don't have an account? <a onclick="showScreen('register')">Create Account</a>
+        </div>
+    </div>
+</div>
+
+<!-- ── REGISTER SCREEN ── -->
+<div class="screen auth-screen" id="screen-register">
+    <div class="auth-card">
+        <div>
+            <h1>Create Account</h1>
+            <p>Sign up to get started</p>
+        </div>
+        <div>
+            <label for="reg-username">Username</label>
+            <input type="text" id="reg-username" placeholder="Choose a username" tabindex="1" autocomplete="username">
+        </div>
+        <div>
+            <label for="reg-password">Password</label>
+            <input type="password" id="reg-password" placeholder="Choose a password" tabindex="2" autocomplete="new-password">
+        </div>
+        <div>
+            <label for="reg-name">Full Name</label>
+            <input type="text" id="reg-name" placeholder="Enter your full name" tabindex="3" autocomplete="name">
+        </div>
+        <div>
+            <label for="reg-email">Email Address</label>
+            <input type="email" id="reg-email" placeholder="Enter your email" tabindex="4" autocomplete="email">
+        </div>
+        <div>
+            <label for="reg-phone">Phone Number</label>
+            <input type="tel" id="reg-phone" placeholder="Enter your phone number" tabindex="5" autocomplete="tel">
+        </div>
+        <div class="status" id="register-status"></div>
+        <button class="btn btn-primary" tabindex="6" onclick="doRegister()">Sign Up</button>
+        <div class="link-row">
+            Already have an account? <a onclick="showScreen('login')">Sign In</a>
+        </div>
+    </div>
+</div>
+
+<!-- ── DASHBOARD SCREEN ── -->
+<div class="screen dashboard-screen" id="screen-dashboard">
+    <div class="topbar">
+        <h2>MyApp</h2>
+        <div class="topbar-right">
+            <span class="username-badge" id="topbar-username"></span>
+            <button class="btn btn-secondary btn-sm" onclick="doLogout()">Logout</button>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="section-header">
+            <h3>My Events</h3>
+            <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Add Event</button>
+        </div>
+        <div id="events-list"><div class="loading">Loading events...</div></div>
+    </div>
+</div>
+
+<!-- ── ADD EVENT MODAL ── -->
+<div class="modal-overlay" id="modal-add">
+    <div class="modal">
+        <h3>Add Event</h3>
+        <div>
+            <label for="add-title">Title</label>
+            <input type="text" id="add-title" placeholder="Event title" tabindex="1">
+        </div>
+        <div>
+            <label for="add-date">Date (YYYY-MM-DD)</label>
+            <input type="date" id="add-date" tabindex="2">
+        </div>
+        <div>
+            <label for="add-time">Time</label>
+            <input type="time" id="add-time" tabindex="3">
+        </div>
+        <div>
+            <label for="add-desc">Description</label>
+            <input type="text" id="add-desc" placeholder="Optional description" tabindex="4">
+        </div>
+        <div class="status" id="add-status"></div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal('modal-add')">Cancel</button>
+            <button class="btn btn-primary" onclick="doAddEvent()">Save Event</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── EDIT EVENT MODAL ── -->
+<div class="modal-overlay" id="modal-edit">
+    <div class="modal">
+        <h3>Edit Event</h3>
+        <div>
+            <label for="edit-title">Title</label>
+            <input type="text" id="edit-title" placeholder="Event title" tabindex="1">
+        </div>
+        <div>
+            <label for="edit-date">Date (YYYY-MM-DD)</label>
+            <input type="date" id="edit-date" tabindex="2">
+        </div>
+        <div>
+            <label for="edit-time">Time</label>
+            <input type="time" id="edit-time" tabindex="3">
+        </div>
+        <div>
+            <label for="edit-desc">Description</label>
+            <input type="text" id="edit-desc" placeholder="Optional description" tabindex="4">
+        </div>
+        <div class="status" id="edit-status"></div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal('modal-edit')">Cancel</button>
+            <button class="btn btn-purple" onclick="doEditEvent()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const BASE_URL = 'https://django-app-tnbd.onrender.com';
+    let authToken = localStorage.getItem('authToken') || '';
+    let currentUsername = localStorage.getItem('username') || '';
+    let editingEventId = null;
+
+    // ── INIT ──
+    window.onload = () => {
+        if (authToken) {
+            showScreen('dashboard');
+            loadEvents();
+        } else {
+            showScreen('login');
+        }
+        // Tab key navigation for login
+        document.getElementById('login-password').addEventListener('keydown', e => {
+            if (e.key === 'Enter') doLogin();
+        });
+        document.getElementById('reg-phone').addEventListener('keydown', e => {
+            if (e.key === 'Enter') doRegister();
+        });
+    };
+
+    // ── SCREENS ──
+    function showScreen(name) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(`screen-${name}`).classList.add('active');
+    }
+
+    function setStatus(id, msg, type) {
+        const el = document.getElementById(id);
+        el.textContent = msg;
+        el.className = `status ${type}`;
+    }
+
+    // ── LOGIN ──
+    async function doLogin() {
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value;
+        if (!username || !password) {
+            setStatus('login-status', 'Username and password are required.', 'error');
+            return;
+        }
+        setStatus('login-status', 'Signing in…', 'info');
+        try {
+            const resp = await fetch(`${BASE_URL}/api/token/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            const data = await resp.json();
+            if (resp.ok) {
+                authToken = data.token;
+                currentUsername = username;
+                localStorage.setItem('authToken', authToken);
+                localStorage.setItem('username', username);
+                document.getElementById('topbar-username').textContent = username;
+                setStatus('login-status', '', '');
+                showScreen('dashboard');
+                loadEvents();
+            } else {
+                setStatus('login-status', 'Invalid credentials.', 'error');
+            }
+        } catch (e) {
+            setStatus('login-status', 'Connection error.', 'error');
+        }
+    }
+
+    // ── REGISTER ──
+    async function doRegister() {
+        const username = document.getElementById('reg-username').value.trim();
+        const password = document.getElementById('reg-password').value.trim();
+        const name     = document.getElementById('reg-name').value.trim();
+        const email    = document.getElementById('reg-email').value.trim();
+        const phone    = document.getElementById('reg-phone').value.trim();
+        if (!username || !password) {
+            setStatus('register-status', 'Username and password are required.', 'error');
+            return;
+        }
+        setStatus('register-status', 'Creating account…', 'info');
+        try {
+            const resp = await fetch(`${BASE_URL}/api/register/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password, name, email, phone })
+            });
+            const data = await resp.json();
+            if (resp.ok) {
+                authToken = data.token;
+                currentUsername = username;
+                localStorage.setItem('authToken', authToken);
+                localStorage.setItem('username', username);
+                document.getElementById('topbar-username').textContent = username;
+                setStatus('register-status', '', '');
+                showScreen('dashboard');
+                loadEvents();
+            } else {
+                setStatus('register-status', data.error || 'Registration failed.', 'error');
+            }
+        } catch (e) {
+            setStatus('register-status', 'Connection error.', 'error');
+        }
+    }
+
+    // ── LOGOUT ──
+    function doLogout() {
+        authToken = '';
+        currentUsername = '';
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('username');
+        showScreen('login');
+    }
+
+    // ── LOAD EVENTS ──
+    async function loadEvents() {
+        document.getElementById('topbar-username').textContent = currentUsername;
+        document.getElementById('events-list').innerHTML = '<div class="loading">Loading events...</div>';
+        try {
+            const resp = await fetch(`${BASE_URL}/api/events/`, {
+                headers: { 'Authorization': `Token ${authToken}` }
+            });
+            const events = await resp.json();
+            renderEvents(events);
+        } catch (e) {
+            document.getElementById('events-list').innerHTML = '<div class="no-events">Failed to load events.</div>';
+        }
+    }
+
+    function renderEvents(events) {
+        const list = document.getElementById('events-list');
+        if (!events.length) {
+            list.innerHTML = '<div class="no-events">No events yet. Tap + Add Event to create one.</div>';
+            return;
+        }
+        list.innerHTML = events.map(e => `
+            <div class="event-card">
+                <div class="event-info">
+                    <div class="event-title">${e.title}</div>
+                    <div class="event-datetime">${e.date} at ${e.time}</div>
+                    ${e.description ? `<div class="event-desc">${e.description}</div>` : ''}
+                </div>
+                <div class="event-actions">
+                    <button class="btn btn-purple btn-sm" onclick="openEditModal(${JSON.stringify(e).replace(/"/g, '&quot;')})">Edit</button>
+                    <button class="btn btn-danger btn-sm" onclick="doDeleteEvent(${e.id})">Del</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // ── ADD EVENT ──
+    function openAddModal() {
+        document.getElementById('add-title').value = '';
+        document.getElementById('add-date').value = '';
+        document.getElementById('add-time').value = '';
+        document.getElementById('add-desc').value = '';
+        setStatus('add-status', '', '');
+        document.getElementById('modal-add').classList.add('active');
+        document.getElementById('add-title').focus();
+    }
+
+    async function doAddEvent() {
+        const title = document.getElementById('add-title').value.trim();
+        const date  = document.getElementById('add-date').value;
+        const time  = document.getElementById('add-time').value;
+        const desc  = document.getElementById('add-desc').value.trim();
+        if (!title || !date || !time) {
+            setStatus('add-status', 'Title, date and time are required.', 'error');
+            return;
+        }
+        setStatus('add-status', 'Saving…', 'info');
+        try {
+            const resp = await fetch(`${BASE_URL}/api/events/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${authToken}`
+                },
+                body: JSON.stringify({ title, date, time: time + ':00', description: desc })
+            });
+            if (resp.ok) {
+                closeModal('modal-add');
+                loadEvents();
+            } else {
+                const data = await resp.json();
+                setStatus('add-status', JSON.stringify(data), 'error');
+            }
+        } catch (e) {
+            setStatus('add-status', 'Connection error.', 'error');
+        }
+    }
+
+    // ── EDIT EVENT ──
+    function openEditModal(event) {
+        editingEventId = event.id;
+        document.getElementById('edit-title').value = event.title;
+        document.getElementById('edit-date').value  = event.date;
+        document.getElementById('edit-time').value  = event.time.substring(0, 5);
+        document.getElementById('edit-desc').value  = event.description || '';
+        setStatus('edit-status', '', '');
+        document.getElementById('modal-edit').classList.add('active');
+        document.getElementById('edit-title').focus();
+    }
+
+    async function doEditEvent() {
+        const title = document.getElementById('edit-title').value.trim();
+        const date  = document.getElementById('edit-date').value;
+        const time  = document.getElementById('edit-time').value;
+        const desc  = document.getElementById('edit-desc').value.trim();
+        if (!title || !date || !time) {
+            setStatus('edit-status', 'Title, date and time are required.', 'error');
+            return;
+        }
+        setStatus('edit-status', 'Saving…', 'info');
+        try {
+            const resp = await fetch(`${BASE_URL}/api/events/${editingEventId}/`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${authToken}`
+                },
+                body: JSON.stringify({ title, date, time: time + ':00', description: desc })
+            });
+            if (resp.ok) {
+                closeModal('modal-edit');
+                loadEvents();
+            } else {
+                const data = await resp.json();
+                setStatus('edit-status', JSON.stringify(data), 'error');
+            }
+        } catch (e) {
+            setStatus('edit-status', 'Connection error.', 'error');
+        }
+    }
+
+    // ── DELETE EVENT ──
+    async function doDeleteEvent(id) {
+        if (!confirm('Delete this event?')) return;
+        try {
+            const resp = await fetch(`${BASE_URL}/api/events/${id}/`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Token ${authToken}` }
+            });
+            if (resp.ok) loadEvents();
+        } catch (e) {
+            alert('Failed to delete event.');
+        }
+    }
+
+    // ── MODAL ──
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+    }
+
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', e => {
+            if (e.target === overlay) overlay.classList.remove('active');
+        });
+    });
+</script>
 </body>
 </html>
