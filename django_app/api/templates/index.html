@@ -6,7 +6,7 @@
     <title>MyApp</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Radio+Canada:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Radio+Canada:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
     :root {
         --bg-dark: #0d0d14;
@@ -28,17 +28,9 @@
         color: var(--text);
         min-height: 100vh;
     }
-
-    /* ── SCREENS ── */
     .screen { display: none; min-height: 100vh; }
     .screen.active { display: flex; }
-
-    /* ── AUTH SCREENS ── */
-    .auth-screen {
-        justify-content: center;
-        align-items: center;
-        padding: 2rem;
-    }
+    .auth-screen { justify-content: center; align-items: center; padding: 2rem; }
     .auth-card {
         background: var(--surface);
         border-radius: 24px;
@@ -47,22 +39,9 @@
         display: grid;
         gap: 1rem;
     }
-    .auth-card h1 {
-        font-size: 2.5rem;
-        font-weight: 300;
-        margin-bottom: 0.25rem;
-    }
-    .auth-card p {
-        color: var(--text-dim);
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
-    }
-    label {
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--text-dim);
-    }
+    .auth-card h1 { font-size: 2.5rem; font-weight: 300; margin-bottom: 0.25rem; }
+    .auth-card p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 0.5rem; }
+    label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); }
     input {
         width: 100%;
         padding: 12px 16px;
@@ -74,10 +53,7 @@
         color: var(--text);
         transition: border-color 0.2s;
     }
-    input:focus {
-        outline: none;
-        border-color: var(--accent-blue);
-    }
+    input:focus { outline: none; border-color: var(--accent-blue); }
     .btn {
         cursor: pointer;
         padding: 14px 20px;
@@ -95,34 +71,16 @@
     .btn-secondary { background: #2a2a4a; }
     .btn-danger { background: var(--accent-red); }
     .btn-purple { background: var(--accent-purp); }
-    .btn-sm {
-        padding: 8px 14px;
-        font-size: 0.85rem;
-        border-radius: 8px;
-    }
-    .status {
-        font-size: 0.9rem;
-        min-height: 1.4em;
-        text-align: center;
-    }
+    .btn-sm { padding: 8px 14px; font-size: 0.85rem; border-radius: 8px; }
+    .status { font-size: 0.9rem; min-height: 1.4em; text-align: center; }
     .status.error { color: var(--accent-red); }
     .status.success { color: var(--accent-green); }
     .status.info { color: var(--accent-cyan); }
-    .link-row {
-        text-align: center;
-        font-size: 0.9rem;
-        color: var(--text-dim);
-    }
-    .link-row a {
-        color: var(--accent-blue);
-        text-decoration: none;
-        cursor: pointer;
-    }
+    .link-row { text-align: center; font-size: 0.9rem; color: var(--text-dim); }
+    .link-row a { color: var(--accent-blue); text-decoration: none; cursor: pointer; }
 
-    /* ── DASHBOARD ── */
-    .dashboard-screen {
-        flex-direction: column;
-    }
+    /* DASHBOARD */
+    .dashboard-screen { flex-direction: column; }
     .topbar {
         background: var(--surface);
         padding: 1rem 2rem;
@@ -131,32 +89,17 @@
         align-items: center;
         border-bottom: 1px solid #2a2a4a;
     }
-    .topbar h2 {
-        font-size: 1.2rem;
-        font-weight: 500;
-        color: var(--accent-cyan);
-    }
+    .topbar h2 { font-size: 1.2rem; font-weight: 500; color: var(--accent-cyan); }
     .topbar-right { display: flex; gap: 0.75rem; align-items: center; }
-    .username-badge {
-        font-size: 0.85rem;
-        color: var(--text-dim);
-    }
-    .main-content {
-        padding: 2rem;
-        max-width: 800px;
-        margin: 0 auto;
-        width: 100%;
-    }
+    .username-badge { font-size: 0.85rem; color: var(--text-dim); }
+    .main-content { padding: 2rem; max-width: 800px; margin: 0 auto; width: 100%; }
     .section-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 1.5rem;
     }
-    .section-header h3 {
-        font-size: 1.4rem;
-        font-weight: 400;
-    }
+    .section-header h3 { font-size: 1.4rem; font-weight: 400; }
     .event-card {
         background: var(--surface);
         border-radius: 16px;
@@ -171,29 +114,43 @@
     }
     .event-card:hover { border-color: #4a4a6a; }
     .event-info { flex: 1; }
-    .event-title {
-        font-size: 1.1rem;
-        font-weight: 500;
-        margin-bottom: 0.25rem;
-    }
-    .event-datetime {
-        font-size: 0.85rem;
-        color: var(--accent-cyan);
-        margin-bottom: 0.25rem;
-    }
-    .event-desc {
-        font-size: 0.85rem;
-        color: var(--text-dim);
-    }
+    .event-title { font-size: 1.1rem; font-weight: 500; margin-bottom: 0.25rem; }
+    .event-datetime { font-size: 0.85rem; color: var(--accent-cyan); margin-bottom: 0.25rem; }
+    .event-desc { font-size: 0.85rem; color: var(--text-dim); }
     .event-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
-    .no-events {
-        text-align: center;
-        color: var(--text-dim);
-        padding: 3rem;
-        font-size: 0.95rem;
+    .no-events { text-align: center; color: var(--text-dim); padding: 3rem; font-size: 0.95rem; }
+
+    /* PROFILE */
+    .profile-card {
+        background: var(--surface);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 1rem;
+        border: 1px solid #2a2a4a;
+        display: grid;
+        gap: 1.25rem;
+    }
+    .profile-field label { display: block; margin-bottom: 0.25rem; }
+    .profile-field .value {
+        font-size: 1.1rem;
+        color: var(--text);
+        padding: 10px 0;
+        border-bottom: 1px solid #2a2a4a;
+    }
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: var(--accent-purp);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
     }
 
-    /* ── MODAL ── */
+    /* MODAL */
     .modal-overlay {
         display: none;
         position: fixed;
@@ -216,14 +173,12 @@
     .modal h3 { font-size: 1.4rem; font-weight: 400; }
     .modal-actions { display: flex; gap: 0.75rem; }
     .modal-actions .btn { flex: 1; }
-
-    /* ── LOADING ── */
     .loading { text-align: center; color: var(--text-dim); padding: 2rem; }
 </style>
 </head>
 <body>
 
-<!-- ── LOGIN SCREEN ── -->
+<!-- LOGIN -->
 <div class="screen auth-screen active" id="screen-login">
     <div class="auth-card">
         <div>
@@ -246,7 +201,7 @@
     </div>
 </div>
 
-<!-- ── REGISTER SCREEN ── -->
+<!-- REGISTER -->
 <div class="screen auth-screen" id="screen-register">
     <div class="auth-card">
         <div>
@@ -281,25 +236,45 @@
     </div>
 </div>
 
-<!-- ── DASHBOARD SCREEN ── -->
+<!-- EVENTS DASHBOARD -->
 <div class="screen dashboard-screen" id="screen-dashboard">
     <div class="topbar">
-        <h2>MyApp</h2>
+        <h2>My Events</h2>
         <div class="topbar-right">
             <span class="username-badge" id="topbar-username"></span>
+            <button class="btn btn-secondary btn-sm" onclick="showProfile()">👤 Profile</button>
             <button class="btn btn-secondary btn-sm" onclick="doLogout()">Logout</button>
         </div>
     </div>
     <div class="main-content">
         <div class="section-header">
-            <h3>My Events</h3>
+            <h3>Events</h3>
             <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Add Event</button>
         </div>
         <div id="events-list"><div class="loading">Loading events...</div></div>
     </div>
 </div>
 
-<!-- ── ADD EVENT MODAL ── -->
+<!-- PROFILE SCREEN -->
+<div class="screen dashboard-screen" id="screen-profile">
+    <div class="topbar">
+        <h2>My Profile</h2>
+        <div class="topbar-right">
+            <button class="btn btn-secondary btn-sm" onclick="showScreen('dashboard')">← Back to Events</button>
+            <button class="btn btn-secondary btn-sm" onclick="doLogout()">Logout</button>
+        </div>
+    </div>
+    <div class="main-content">
+        <div class="section-header">
+            <h3>Profile</h3>
+        </div>
+        <div class="profile-card" id="profile-card">
+            <div class="loading">Loading profile...</div>
+        </div>
+    </div>
+</div>
+
+<!-- ADD EVENT MODAL -->
 <div class="modal-overlay" id="modal-add">
     <div class="modal">
         <h3>Add Event</h3>
@@ -308,7 +283,7 @@
             <input type="text" id="add-title" placeholder="Event title" tabindex="1">
         </div>
         <div>
-            <label for="add-date">Date (YYYY-MM-DD)</label>
+            <label for="add-date">Date</label>
             <input type="date" id="add-date" tabindex="2">
         </div>
         <div>
@@ -327,7 +302,7 @@
     </div>
 </div>
 
-<!-- ── EDIT EVENT MODAL ── -->
+<!-- EDIT EVENT MODAL -->
 <div class="modal-overlay" id="modal-edit">
     <div class="modal">
         <h3>Edit Event</h3>
@@ -336,7 +311,7 @@
             <input type="text" id="edit-title" placeholder="Event title" tabindex="1">
         </div>
         <div>
-            <label for="edit-date">Date (YYYY-MM-DD)</label>
+            <label for="edit-date">Date</label>
             <input type="date" id="edit-date" tabindex="2">
         </div>
         <div>
@@ -361,7 +336,6 @@
     let currentUsername = localStorage.getItem('username') || '';
     let editingEventId = null;
 
-    // ── INIT ──
     window.onload = () => {
         if (authToken) {
             showScreen('dashboard');
@@ -369,7 +343,6 @@
         } else {
             showScreen('login');
         }
-        // Tab key navigation for login
         document.getElementById('login-password').addEventListener('keydown', e => {
             if (e.key === 'Enter') doLogin();
         });
@@ -378,7 +351,6 @@
         });
     };
 
-    // ── SCREENS ──
     function showScreen(name) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(`screen-${name}`).classList.add('active');
@@ -390,7 +362,6 @@
         el.className = `status ${type}`;
     }
 
-    // ── LOGIN ──
     async function doLogin() {
         const username = document.getElementById('login-username').value.trim();
         const password = document.getElementById('login-password').value;
@@ -423,7 +394,6 @@
         }
     }
 
-    // ── REGISTER ──
     async function doRegister() {
         const username = document.getElementById('reg-username').value.trim();
         const password = document.getElementById('reg-password').value.trim();
@@ -459,7 +429,6 @@
         }
     }
 
-    // ── LOGOUT ──
     function doLogout() {
         authToken = '';
         currentUsername = '';
@@ -468,7 +437,6 @@
         showScreen('login');
     }
 
-    // ── LOAD EVENTS ──
     async function loadEvents() {
         document.getElementById('topbar-username').textContent = currentUsername;
         document.getElementById('events-list').innerHTML = '<div class="loading">Loading events...</div>';
@@ -486,7 +454,7 @@
     function renderEvents(events) {
         const list = document.getElementById('events-list');
         if (!events.length) {
-            list.innerHTML = '<div class="no-events">No events yet. Tap + Add Event to create one.</div>';
+            list.innerHTML = '<div class="no-events">No events yet. Click + Add Event to create one.</div>';
             return;
         }
         list.innerHTML = events.map(e => `
@@ -504,7 +472,42 @@
         `).join('');
     }
 
-    // ── ADD EVENT ──
+    async function showProfile() {
+        showScreen('profile');
+        document.getElementById('profile-card').innerHTML = '<div class="loading">Loading profile...</div>';
+        try {
+            const resp = await fetch(`${BASE_URL}/api/users/`, {
+                headers: { 'Authorization': `Token ${authToken}` }
+            });
+            const users = await resp.json();
+            const user = users[0];
+            if (user) {
+                const initial = (user.name || currentUsername).charAt(0).toUpperCase();
+                document.getElementById('profile-card').innerHTML = `
+                    <div class="profile-avatar">${initial}</div>
+                    <div class="profile-field">
+                        <label>Full Name</label>
+                        <div class="value">${user.name || '—'}</div>
+                    </div>
+                    <div class="profile-field">
+                        <label>Email</label>
+                        <div class="value">${user.email || '—'}</div>
+                    </div>
+                    <div class="profile-field">
+                        <label>Phone</label>
+                        <div class="value">${user.phone || '—'}</div>
+                    </div>
+                    <div class="profile-field">
+                        <label>Member Since</label>
+                        <div class="value">${new Date(user.date_registered).toLocaleDateString()}</div>
+                    </div>
+                `;
+            }
+        } catch (e) {
+            document.getElementById('profile-card').innerHTML = '<div class="no-events">Failed to load profile.</div>';
+        }
+    }
+
     function openAddModal() {
         document.getElementById('add-title').value = '';
         document.getElementById('add-date').value = '';
@@ -546,7 +549,6 @@
         }
     }
 
-    // ── EDIT EVENT ──
     function openEditModal(event) {
         editingEventId = event.id;
         document.getElementById('edit-title').value = event.title;
@@ -589,7 +591,6 @@
         }
     }
 
-    // ── DELETE EVENT ──
     async function doDeleteEvent(id) {
         if (!confirm('Delete this event?')) return;
         try {
@@ -603,12 +604,10 @@
         }
     }
 
-    // ── MODAL ──
     function closeModal(id) {
         document.getElementById(id).classList.remove('active');
     }
 
-    // Close modal on overlay click
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', e => {
             if (e.target === overlay) overlay.classList.remove('active');
