@@ -267,6 +267,7 @@
     <div class="main-content">
         <div class="section-header">
             <h3>Profile</h3>
+            <button class="btn btn-purple btn-sm" onclick="openChangePasswordModal()">Change Password</button>
         </div>
         <div class="profile-card" id="profile-card">
             <div class="loading">Loading profile...</div>
@@ -326,6 +327,30 @@
         <div class="modal-actions">
             <button class="btn btn-secondary" onclick="closeModal('modal-edit')">Cancel</button>
             <button class="btn btn-purple" onclick="doEditEvent()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="modal-change-password">
+    <div class="modal">
+        <h3>Change Password</h3>
+        <div>
+            <label for="old-password">Current Password</label>
+            <input type="password" id="old-password" placeholder="Enter current password" tabindex="1">
+        </div>
+        <div>
+            <label for="new-password">New Password</label>
+            <input type="password" id="new-password" placeholder="Enter new password" tabindex="2">
+        </div>
+        <div>
+            <label for="confirm-password">Confirm New Password</label>
+            <input type="password" id="confirm-password" placeholder="Confirm new password" tabindex="3">
+        </div>
+        <div class="status" id="change-password-status"></div>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal('modal-change-password')">Cancel</button>
+            <button class="btn btn-purple" onclick="doChangePassword()">Update Password</button>
         </div>
     </div>
 </div>
@@ -626,6 +651,51 @@
             if (resp.ok) loadEvents();
         } catch (e) {
             alert('Failed to delete event.');
+        }
+    }
+
+    function openChangePasswordModal() {
+        document.getElementById("old-password").value = "";
+        document.getElementById("new-password").value = "";
+        document.getElementById("confirm-password").value = "";
+        setStatus("change-password-status", "", "");
+        document.getElementById("modal-change-password").classList.add("active");
+        document.getElementById("old-password").focus();
+    }
+
+    async function doChangePassword() {
+        const oldPass     = document.getElementById("old-password").value;
+        const newPass     = document.getElementById("new-password").value;
+        const confirmPass = document.getElementById("confirm-password").value;
+        if (!oldPass || !newPass || !confirmPass) {
+            setStatus("change-password-status", "All fields are required.", "error");
+            return;
+        }
+        if (newPass !== confirmPass) {
+            setStatus("change-password-status", "New passwords do not match.", "error");
+            return;
+        }
+        setStatus("change-password-status", "Updating password...", "info");
+        try {
+            const resp = await fetch(`${BASE_URL}/api/change-password/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Token ${authToken}`
+                },
+                body: JSON.stringify({ old_password: oldPass, new_password: newPass })
+            });
+            const data = await resp.json();
+            if (resp.ok) {
+                authToken = data.token;
+                localStorage.setItem("authToken", authToken);
+                setStatus("change-password-status", "Password updated successfully!", "success");
+                setTimeout(() => closeModal("modal-change-password"), 1500);
+            } else {
+                setStatus("change-password-status", data.error || "Failed to update password.", "error");
+            }
+        } catch (e) {
+            setStatus("change-password-status", "Connection error.", "error");
         }
     }
 
