@@ -248,7 +248,7 @@
     </div>
     <div class="main-content">
         <div class="section-header">
-            <h3>Events</h3>
+            <h3 id="greeting">Good Morning</h3>
             <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Add Event</button>
         </div>
         <div id="events-list"><div class="loading">Loading events...</div></div>
@@ -385,6 +385,7 @@
                 document.getElementById('topbar-username').textContent = username;
                 setStatus('login-status', '', '');
                 showScreen('dashboard');
+                updateGreeting();
                 loadEvents();
             } else {
                 setStatus('login-status', 'Invalid credentials.', 'error');
@@ -420,6 +421,7 @@
                 document.getElementById('topbar-username').textContent = username;
                 setStatus('register-status', '', '');
                 showScreen('dashboard');
+                updateGreeting();
                 loadEvents();
             } else {
                 setStatus('register-status', data.error || 'Registration failed.', 'error');
@@ -435,6 +437,16 @@
         localStorage.removeItem('authToken');
         localStorage.removeItem('username');
         showScreen('login');
+    }
+
+    function updateGreeting() {
+        const hour = new Date().getHours();
+        let greeting;
+        if (hour < 12) greeting = 'Good Morning';
+        else if (hour < 17) greeting = 'Good Afternoon';
+        else greeting = 'Good Evening';
+        const el = document.getElementById('greeting');
+        if (el) el.textContent = `${greeting}, ${currentUsername}!`;
     }
 
     async function loadEvents() {
