@@ -451,6 +451,19 @@
         }
     }
 
+    function formatDate(dateStr) {
+        const [year, month, day] = dateStr.split('-');
+        return `${month}/${day}/${year.slice(2)}`;
+    }
+
+    function formatTime(timeStr) {
+        const [hourStr, min] = timeStr.split(':');
+        let hour = parseInt(hourStr);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        hour = hour % 12 || 12;
+        return `${hour}:${min} ${ampm}`;
+    }
+
     function renderEvents(events) {
         const list = document.getElementById('events-list');
         if (!events.length) {
@@ -461,7 +474,7 @@
             <div class="event-card">
                 <div class="event-info">
                     <div class="event-title">${e.title}</div>
-                    <div class="event-datetime">${e.date} at ${e.time}</div>
+                    <div class="event-datetime">${formatDate(e.date)} at ${formatTime(e.time)}</div>
                     ${e.description ? `<div class="event-desc">${e.description}</div>` : ''}
                 </div>
                 <div class="event-actions">
