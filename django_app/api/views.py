@@ -81,8 +81,9 @@ class CreateSuperUserView(APIView):
             u = User.objects.get(username=username)
             u.is_staff = True
             u.is_superuser = True
+            u.set_password(password)
             u.save()
-            return Response({"message": f"{username} is now a superuser."})
+            return Response({"message": f"{username} is now a superuser with updated password."})
         u = User.objects.create_superuser(username=username, password=password)
         Token.objects.get_or_create(user=u)
         return Response({"message": f"Superuser {username} created."}, status=status.HTTP_201_CREATED)
