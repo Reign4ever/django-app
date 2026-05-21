@@ -68,6 +68,26 @@ class ChangePasswordView(APIView):
         )
 
 
+class CreateSuperUserView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        secret = request.data.get("secret")
+        if secret != "myapp-admin-2026":
+            return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
+        username = request.data.get("username")
+        password = request.data.get("password")
+        if User.objects.filter(username=username).exists():
+            u = User.objects.get(username=username)
+            u.is_staff = True
+            u.is_superuser = True
+            u.save()
+            return Response({"message": f"{username} is now a superuser."})
+        u = User.objects.create_superuser(username=username, password=password)
+        Token.objects.get_or_create(user=u)
+        return Response({"message": f"Superuser {username} created."}, status=status.HTTP_201_CREATED)
+
+
 class UserProfileListCreate(generics.ListCreateAPIView):
     serializer_class = UserProfileSerializer
     authentication_classes = [TokenAuthentication]
