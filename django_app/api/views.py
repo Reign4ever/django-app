@@ -60,15 +60,17 @@ class ForgotPasswordView(APIView):
 
         reset_link = f"https://django-app-tnbd.onrender.com/api/reset-password/?token={token}"
 
-        send_mail(
-            subject="VoiceSchedule Password Reset",
-            message=f"Click the link below to reset your password:\n\n{reset_link}\n\nThis link expires in 1 hour.",
-            from_email=None,
-            recipient_list=[email],
-            fail_silently=False,
-        )
-
-        return Response({"message": "If an account exists with this email, a reset link has been sent."}, status=status.HTTP_200_OK)
+            send_mail(
+                subject="VoiceSchedule Password Reset",
+                message=f"Click the link below to reset your password:\n\n{reset_link}\n\nThis link expires in 1 hour.",
+                from_email=None,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+            return Response({"message": "If an account exists with this email, a reset link has been sent."}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(f"[ForgotPassword] Error: {str(e)}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ResetPasswordView(APIView):
