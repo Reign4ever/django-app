@@ -37,6 +37,72 @@ class RegisterView(APIView):
         return Response({"token": token.key, "username": username}, status=status.HTTP_201_CREATED)
 
 
+class ForgotPasswordView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email")
+        if not email:
+            return Response({"error": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"message": "If an account exists with this email, a reset link has been sent."}, status=status.HTTP_200_OK)
+
+        # Generate reset token
+        import secrets
+        from django.core.cache import cache
+        from django.core.mail import send_mail
+
+        token = secrets.token_urlsafe(32)
+        cache.set(f"password_reset_{token}", user.id, timeout=3600)  # 1 hour
+
+        reset_link = f"https://django-app-tnbd.onrender.com/api/reset-password/?token={token}"
+
+        send_mail(
+            subject="VoiceSchedule Password Reset",
+            message=f"Click the link below to reset your password:\n\n{reset_link}\n\nThis link expires in 1 hour.",
+            from_email=None,
+            recipient_list=[email],
+            fail_silently=False,
+        )
+
+        return Response({"message": "If an account exists with this email, a reset link has been sent."}, status=status.HTTP_200_OK)
+
+
+class ResetPasswordView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        token = request.query_params.get("token")
+        if not token:
+            return Response({"error": "Token is required."}, status=status.HTTP_400_BAD_REQUEST)
+        from django.core.cache import cache
+        user_id = cache.get(f"password_reset_{token}")
+        if not user_id:
+            return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"message": "Token is valid.", "token": token}, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        token = request.data.get("token")
+        new_password = request.data.get("new_password")
+        if not token or not new_password:
+            return Response({"error": "Token and new password are required."}, status=status.HTTP_400_BAD_REQUEST)
+        from django.core.cache import cache
+        user_id = cache.get(f"password_reset_{token}")
+        if not user_id:
+            return Response({"error": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(id=user_id)
+            user.set_password(new_password)
+            user.save()
+            cache.delete(f"password_reset_{token}")
+            return Response({"message": "Password reset successfully."}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class ChangePasswordView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
