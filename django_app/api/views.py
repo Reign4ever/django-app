@@ -41,13 +41,22 @@ class ForgotPasswordView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        import secrets
-        import traceback
+        import secrets        import traceback
         from django.core.cache import cache
         from django.core.mail import send_mail
 
         print(f"[ForgotPassword] POST received with data: {request.data}")
 
+        try:
+            user = User.objects.filter(email=email).first()
+            if not user:
+                try:
+                    profile = UserProfile.objects.filter(email=email).first()
+                    if profile:
+                        user = profile.user
+                except (UserProfile.DoesNotExist, AttributeError):
+                    pass
+ 
         try:
             email = request.data.get("email")
             if not email:
