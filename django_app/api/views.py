@@ -41,6 +41,7 @@ class ForgotPasswordView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        print(f"[ForgotPassword] POST received with data: {request.data}")
         email = request.data.get("email")
         if not email:
             return Response({"error": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
