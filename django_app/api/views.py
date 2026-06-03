@@ -41,7 +41,7 @@ class ForgotPasswordView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        import secrets       
+        import secrets
         import traceback
         from django.core.cache import cache
         from django.core.mail import send_mail
@@ -49,29 +49,15 @@ class ForgotPasswordView(APIView):
         print(f"[ForgotPassword] POST received with data: {request.data}")
 
         try:
-            user = User.objects.filter(email=email).first()
-            if not user:
-                try:
-                    profile = UserProfile.objects.filter(email=email).first()
-                    if profile:
-                        user = profile.user
-                except (UserProfile.DoesNotExist, AttributeError):
-                    pass
- 
-        try:
             email = request.data.get("email")
             if not email:
                 return Response({"error": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-            user = None
-            try:
-                user = User.objects.get(email=email)
-            except User.DoesNotExist:
-                try:
-                    profile = UserProfile.objects.get(email=email)
+            user = User.objects.filter(email=email).first()
+            if not user:
+                profile = UserProfile.objects.filter(email=email).first()
+                if profile:
                     user = profile.user
-                except (UserProfile.DoesNotExist, AttributeError):
-                    pass
 
             print(f"[ForgotPassword] user object: {user}")
 
@@ -79,7 +65,6 @@ class ForgotPasswordView(APIView):
                 return Response({"message": "If an account exists with this email, a reset link has been sent."}, status=status.HTTP_200_OK)
 
             print(f"[ForgotPassword] user found, proceeding")
-            print(f"[ForgotPassword] Generating token for user: {user.username}")
 
             token = secrets.token_urlsafe(32)
             print(f"[ForgotPassword] Token generated: {token[:10]}...")
@@ -102,9 +87,10 @@ class ForgotPasswordView(APIView):
             return Response({"message": "If an account exists with this email, a reset link has been sent."}, status=status.HTTP_200_OK)
 
         except Exception as e:
+            import traceback
             print(f"[ForgotPassword] GLOBAL ERROR: {traceback.format_exc()}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            
+
 
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny]
