@@ -60,9 +60,13 @@ class ForgotPasswordView(APIView):
             import secrets
             from django.core.cache import cache
             from django.core.mail import send_mail
+            print(f"[ForgotPassword] Generating token for user: {user.username}")
             token = secrets.token_urlsafe(32)
+            print(f"[ForgotPassword] Token generated: {token[:10]}...")
             cache.set(f"password_reset_{token}", user.id, timeout=3600)
+            print(f"[ForgotPassword] Token cached")
             reset_link = f"https://django-app-tnbd.onrender.com/api/reset-password/?token={token}"
+            print(f"[ForgotPassword] Sending email to {email}")
             send_mail(
                 subject="VoiceSchedule Password Reset",
                 message=f"Click the link below to reset your password:\n\n{reset_link}\n\nThis link expires in 1 hour.",
@@ -70,9 +74,12 @@ class ForgotPasswordView(APIView):
                 recipient_list=[email],
                 fail_silently=False,
             )
+            print(f"[ForgotPassword] Email sent successfully")
             return Response({"message": "If an account exists with this email, a reset link has been sent."}, status=status.HTTP_200_OK)
         except Exception as e:
+            import traceback
             print(f"[ForgotPassword] Error: {str(e)}")
+            print(f"[ForgotPassword] Traceback: {traceback.format_exc()}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ResetPasswordView(APIView):
