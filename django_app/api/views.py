@@ -54,8 +54,10 @@ class ForgotPasswordView(APIView):
                 user = profile.user
             except (UserProfile.DoesNotExist, AttributeError):
                 pass
+        print(f"[ForgotPassword] user object: {user}")
         if not user:
             return Response({"message": "If an account exists with this email, a reset link has been sent."}, status=status.HTTP_200_OK)
+        print(f"[ForgotPassword] user found, proceeding")
         try:
             import secrets
             from django.core.cache import cache
