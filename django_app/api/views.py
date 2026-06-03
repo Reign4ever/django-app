@@ -41,35 +41,45 @@ class ForgotPasswordView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
+        import secrets
+        import traceback
+        from django.core.cache import cache
+        from django.core.mail import send_mail
+
         print(f"[ForgotPassword] POST received with data: {request.data}")
+
         try:
-        email = request.data.get("email")
-        if not email:
-            return Response({"error": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
-        user = None
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
+            email = request.data.get("email")
+            if not email:
+                return Response({"error": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+            user = None
             try:
-                profile = UserProfile.objects.get(email=email)
-                user = profile.user
-            except (UserProfile.DoesNotExist, AttributeError):
-                pass
-        print(f"[ForgotPassword] user object: {user}")
-        if not user:
-            return Response({"message": "If an account exists with this email, a reset link has been sent."}, status=status.HTTP_200_OK)
-        print(f"[ForgotPassword] user found, proceeding")
-        try:
-            import secrets
-            from django.core.cache import cache
-            from django.core.mail import send_mail
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                try:
+                    profile = UserProfile.objects.get(email=email)
+                    user = profile.user
+                except (UserProfile.DoesNotExist, AttributeError):
+                    pass
+
+            print(f"[ForgotPassword] user object: {user}")
+
+            if not user:
+                return Response({"message": "If an account exists with this email, a reset link has been sent."}, status=status.HTTP_200_OK)
+
+            print(f"[ForgotPassword] user found, proceeding")
             print(f"[ForgotPassword] Generating token for user: {user.username}")
+
             token = secrets.token_urlsafe(32)
             print(f"[ForgotPassword] Token generated: {token[:10]}...")
+
             cache.set(f"password_reset_{token}", user.id, timeout=3600)
             print(f"[ForgotPassword] Token cached")
+
             reset_link = f"https://django-app-tnbd.onrender.com/api/reset-password/?token={token}"
             print(f"[ForgotPassword] Sending email to {email}")
+
             send_mail(
                 subject="VoiceSchedule Password Reset",
                 message=f"Click the link below to reset your password:\n\n{reset_link}\n\nThis link expires in 1 hour.",
@@ -77,18 +87,14 @@ class ForgotPasswordView(APIView):
                 recipient_list=[email],
                 fail_silently=False,
             )
+
             print(f"[ForgotPassword] Email sent successfully")
             return Response({"message": "If an account exists with this email, a reset link has been sent."}, status=status.HTTP_200_OK)
-        except Exception as e:
-            import traceback
-            print(f"[ForgotPassword] Error: {str(e)}")
-            print(f"[ForgotPassword] Traceback: {traceback.format_exc()}")
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except Exception as e:
-            import traceback
             print(f"[ForgotPassword] GLOBAL ERROR: {traceback.format_exc()}")
-            return Response({"error": str(e)}, status=500)
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
 
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny]
