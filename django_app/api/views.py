@@ -41,7 +41,8 @@ class ForgotPasswordView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        import secrets        import traceback
+        import secrets       
+        import traceback
         from django.core.cache import cache
         from django.core.mail import send_mail
 
