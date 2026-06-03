@@ -44,22 +44,24 @@ class ForgotPasswordView(APIView):
         email = request.data.get("email")
         if not email:
             return Response({"error": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
-
+        user = None
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
+            try:
+                profile = UserProfile.objects.get(email=email)
+                user = profile.user
+            except (UserProfile.DoesNotExist, AttributeError):
+                pass
+        if not user:
             return Response({"message": "If an account exists with this email, a reset link has been sent."}, status=status.HTTP_200_OK)
-
-        # Generate reset token
-        import secrets
-        from django.core.cache import cache
-        from django.core.mail import send_mail
-
-        token = secrets.token_urlsafe(32)
-        cache.set(f"password_reset_{token}", user.id, timeout=3600)  # 1 hour
-
-        reset_link = f"https://django-app-tnbd.onrender.com/api/reset-password/?token={token}"
-
+        try:
+            import secrets
+            from django.core.cache import cache
+            from django.core.mail import send_mail
+            token = secrets.token_urlsafe(32)
+            cache.set(f"password_reset_{token}", user.id, timeout=3600)
+            reset_link = f"https://django-app-tnbd.onrender.com/api/reset-password/?token={token}"
             send_mail(
                 subject="VoiceSchedule Password Reset",
                 message=f"Click the link below to reset your password:\n\n{reset_link}\n\nThis link expires in 1 hour.",
@@ -71,7 +73,6 @@ class ForgotPasswordView(APIView):
         except Exception as e:
             print(f"[ForgotPassword] Error: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny]
