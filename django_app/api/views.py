@@ -42,6 +42,7 @@ class ForgotPasswordView(APIView):
 
     def post(self, request):
         print(f"[ForgotPassword] POST received with data: {request.data}")
+        try:
         email = request.data.get("email")
         if not email:
             return Response({"error": "Email is required."}, status=status.HTTP_400_BAD_REQUEST)
@@ -83,6 +84,11 @@ class ForgotPasswordView(APIView):
             print(f"[ForgotPassword] Error: {str(e)}")
             print(f"[ForgotPassword] Traceback: {traceback.format_exc()}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        except Exception as e:
+            import traceback
+            print(f"[ForgotPassword] GLOBAL ERROR: {traceback.format_exc()}")
+            return Response({"error": str(e)}, status=500)
 
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny]
