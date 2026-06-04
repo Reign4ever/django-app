@@ -198,6 +198,9 @@
         <div class="link-row">
             Don't have an account? <a onclick="showScreen('register')">Create Account</a>
         </div>
+        <div class="link-row">
+            <a onclick="showScreen('forgot')">Forgot Password?</a>
+        </div>
     </div>
 </div>
 
@@ -236,6 +239,48 @@
     </div>
 </div>
 
+
+<!-- FORGOT PASSWORD -->
+<div class="screen auth-screen" id="screen-forgot">
+    <div class="auth-card">
+        <div>
+            <h1>Reset Password</h1>
+            <p>Enter your email to receive a reset link</p>
+        </div>
+        <div>
+            <label for="forgot-email">Email Address</label>
+            <input type="email" id="forgot-email" placeholder="Enter your email" tabindex="1" autocomplete="email">
+        </div>
+        <div class="status" id="forgot-status"></div>
+        <button class="btn btn-primary" tabindex="2" onclick="doForgotPassword()">Send Reset Link</button>
+        <div class="link-row">
+            <a onclick="showScreen('login')">← Back to Sign In</a>
+        </div>
+    </div>
+</div>
+
+<!-- RESET PASSWORD -->
+<div class="screen auth-screen" id="screen-reset">
+    <div class="auth-card">
+        <div>
+            <h1>New Password</h1>
+            <p>Enter your new password below</p>
+        </div>
+        <div>
+            <label for="reset-password">New Password</label>
+            <input type="password" id="reset-password" placeholder="Enter new password" tabindex="1" autocomplete="new-password">
+        </div>
+        <div>
+            <label for="reset-confirm">Confirm Password</label>
+            <input type="password" id="reset-confirm" placeholder="Confirm new password" tabindex="2" autocomplete="new-password">
+        </div>
+        <div class="status" id="reset-status"></div>
+        <button class="btn btn-primary" tabindex="3" onclick="doResetPassword()">Reset Password</button>
+        <div class="link-row">
+            <a onclick="showScreen('login')">← Back to Sign In</a>
+        </div>
+    </div>
+</div>
 <!-- EVENTS DASHBOARD -->
 <div class="screen dashboard-screen" id="screen-dashboard">
     <div class="topbar">
@@ -362,6 +407,12 @@
     let editingEventId = null;
 
     window.onload = () => {
+        // Check if this is a password reset link
+        const urlToken = new URLSearchParams(window.location.search).get('token');
+        if (urlToken) {
+            showScreen('reset');
+            return;
+        }
         if (authToken) {
             showScreen('dashboard');
             loadEvents();
@@ -703,6 +754,68 @@
         document.getElementById(id).classList.remove('active');
     }
 
+
+    async function doForgotPassword() {
+        const email = document.getElementById('forgot-email').value.trim();
+        if (!email) {
+            setStatus('forgot-status', 'Email is required.', 'error');
+            return;
+        }
+        setStatus('forgot-status', 'Sending reset link...', 'info');
+        try {
+            const resp = await fetch(`${BASE_URL}/api/forgot-password/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            const data = await resp.json();
+            if (resp.ok) {
+                setStatus('forgot-status', 'Reset link sent! Check your email.', 'success');
+            } else {
+                setStatus('forgot-status', data.error || 'Something went wrong.', 'error');
+            }
+        } catch (e) {
+            setStatus('forgot-status', 'Connection error.', 'error');
+        }
+    }
+
+    async function doResetPassword() {
+        const newPassword = document.getElementById('reset-password').value;
+        const confirmPassword = document.getElementById('reset-confirm').value;
+        if (!newPassword || !confirmPassword) {
+            setStatus('reset-status', 'Both fields are required.', 'error');
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            setStatus('reset-status', 'Passwords do not match.', 'error');
+            return;
+        }
+        const token = new URLSearchParams(window.location.search).get('token');
+        if (!token) {
+            setStatus('reset-status', 'Invalid reset link.', 'error');
+            return;
+        }
+        setStatus('reset-status', 'Resetting password...', 'info');
+        try {
+            const resp = await fetch(`${BASE_URL}/api/reset-password/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, new_password: newPassword })
+            });
+            const data = await resp.json();
+            if (resp.ok) {
+                setStatus('reset-status', 'Password reset successfully! Redirecting...', 'success');
+                setTimeout(() => {
+                    window.history.replaceState({}, document.title, '/');
+                    showScreen('login');
+                }, 2000);
+            } else {
+                setStatus('reset-status', data.error || 'Reset failed.', 'error');
+            }
+        } catch (e) {
+            setStatus('reset-status', 'Connection error.', 'error');
+        }
+    }
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', e => {
             if (e.target === overlay) overlay.classList.remove('active');
