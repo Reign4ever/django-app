@@ -75,13 +75,14 @@ class ForgotPasswordView(APIView):
             reset_link = f"https://django-app-tnbd.onrender.com/api/reset-password/?token={token}"
             print(f"[ForgotPassword] Sending email to {email}")
 
-            send_mail(
-                subject="VoiceSchedule Password Reset",
-                message=f"Click the link below to reset your password:\n\n{reset_link}\n\nThis link expires in 1 hour.",
-                from_email=None,
-                recipient_list=[email],
-                fail_silently=False,
-            )
+            import resend
+            resend.api_key = os.environ.get("RESEND_API_KEY")
+            resend.Emails.send({
+                "from": "VoiceSchedule <onboarding@resend.dev>",
+                "to": [email],
+                "subject": "VoiceSchedule Password Reset",
+                "text": f"Click the link below to reset your password:\n\n{reset_link}\n\nThis link expires in 1 hour.",
+            })
 
             print(f"[ForgotPassword] Email sent successfully")
             return Response({"message": "If an account exists with this email, a reset link has been sent."}, status=status.HTTP_200_OK)
