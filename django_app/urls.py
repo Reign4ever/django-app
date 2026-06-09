@@ -18,11 +18,18 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
 from rest_framework.authtoken.views import obtain_auth_token
+from django.http import HttpResponseRedirect
+
+def root_redirect(request):
+    token = request.GET.get('token')
+    if token:
+        return HttpResponseRedirect(f'/api/?token={token}')
+    return HttpResponseRedirect('/api/')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('django_app.api.urls')),
     path('api/token/', obtain_auth_token, name='api_token_auth'),
-    path('', RedirectView.as_view(url='/api/')),
+    path('', root_redirect),
 ]
 
