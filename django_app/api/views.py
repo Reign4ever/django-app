@@ -73,7 +73,7 @@ class ForgotPasswordView(APIView):
             cache.set(f"password_reset_{token}", user.id, timeout=3600)
             print(f"[ForgotPassword] Token cached")
 
-            reset_link = f"https://django-app-tnbd.onrender.com/?token={token}"
+            reset_link = f"https://django-app-tnbd.onrender.com/api/?token={token}"
             print(f"[ForgotPassword] Sending email to {email}")
 
             import resend
