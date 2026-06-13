@@ -173,7 +173,45 @@
     .modal h3 { font-size: 1.4rem; font-weight: 400; }
     .modal-actions { display: flex; gap: 0.75rem; }
     .modal-actions .btn { flex: 1; }
-    .loading { text-align: center; color: var(--text-dim); padding: 2rem; }
+    .loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        gap: 1rem;
+        color: var(--text-dim);
+        font-size: 0.9rem;
+    }
+    .spinner {
+        width: 36px;
+        height: 36px;
+        border: 3px solid rgba(74, 158, 255, 0.2);
+        border-top-color: var(--accent-blue);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+    .btn-loading {
+        position: relative;
+        color: transparent !important;
+        pointer-events: none;
+    }
+    .btn-loading::after {
+        content: '';
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        top: 50%;
+        left: 50%;
+        margin: -9px 0 0 -9px;
+        border: 2px solid rgba(255,255,255,0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
 </style>
 </head>
 <body>
@@ -296,7 +334,7 @@
             <h3 id="greeting">Good Morning</h3>
             <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Add Event</button>
         </div>
-        <div id="events-list"><div class="loading">Loading events...</div></div>
+        <div id="events-list"><div class="loading"><div class="spinner"></div>Loading events…</div></div>
     </div>
 </div>
 
@@ -315,7 +353,7 @@
             <button class="btn btn-purple btn-sm" onclick="openChangePasswordModal()">Change Password</button>
         </div>
         <div class="profile-card" id="profile-card">
-            <div class="loading">Loading profile...</div>
+            <div class="loading"><div class="spinner"></div>Loading profile…</div>
         </div>
     </div>
 </div>
@@ -445,7 +483,9 @@
             setStatus('login-status', 'Username and password are required.', 'error');
             return;
         }
-        setStatus('login-status', 'Signing in…', 'info');
+        setStatus('login-status', '', '');
+        const loginBtn = document.querySelector('#screen-login .btn-primary');
+        loginBtn.classList.add('btn-loading');
         try {
             const resp = await fetch(`${BASE_URL}/api/token/`, {
                 method: 'POST',
@@ -460,6 +500,7 @@
                 localStorage.setItem('username', username);
                 document.getElementById('topbar-username').textContent = username;
                 setStatus('login-status', '', '');
+                loginBtn.classList.remove('btn-loading');
                 showScreen('dashboard');
                 updateGreeting();
                 loadEvents();
@@ -527,7 +568,7 @@
 
     async function loadEvents() {
         document.getElementById('topbar-username').textContent = currentUsername;
-        document.getElementById('events-list').innerHTML = '<div class="loading">Loading events...</div>';
+        document.getElementById('events-list').innerHTML = '<div class="loading"><div class="spinner"></div>Loading events…</div>';
         try {
             const resp = await fetch(`${BASE_URL}/api/events/`, {
                 headers: { 'Authorization': `Token ${authToken}` }
@@ -575,7 +616,7 @@
 
     async function showProfile() {
         showScreen('profile');
-        document.getElementById('profile-card').innerHTML = '<div class="loading">Loading profile...</div>';
+        document.getElementById('profile-card').innerHTML = '<div class="loading"><div class="spinner"></div>Loading profile…</div>';
         try {
             const resp = await fetch(`${BASE_URL}/api/users/`, {
                 headers: { 'Authorization': `Token ${authToken}` }
