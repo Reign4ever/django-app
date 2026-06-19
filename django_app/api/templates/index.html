@@ -79,6 +79,38 @@
     .link-row { text-align: center; font-size: 0.9rem; color: var(--text-dim); }
     .link-row a { color: var(--accent-blue); text-decoration: none; cursor: pointer; }
 
+    /* SPLASH SCREEN */
+    #splash-screen {
+        position: fixed;
+        inset: 0;
+        background: var(--bg-dark);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        gap: 1rem;
+        transition: opacity 0.8s ease;
+    }
+    #splash-screen.hidden { opacity: 0; pointer-events: none; }
+    #splash-title {
+        font-size: 2.8rem;
+        font-weight: 300;
+        color: var(--accent-cyan);
+        opacity: 0;
+        transition: opacity 1s ease;
+        letter-spacing: 0.05em;
+    }
+    #splash-subtitle {
+        font-size: 1rem;
+        color: var(--text-dim);
+        opacity: 0;
+        transition: opacity 0.8s ease;
+        letter-spacing: 0.1em;
+    }
+    #splash-title.visible { opacity: 1; }
+    #splash-subtitle.visible { opacity: 1; }
+
     /* DASHBOARD */
     .dashboard-screen { flex-direction: column; }
     .topbar {
@@ -215,6 +247,12 @@
 </style>
 </head>
 <body>
+
+<!-- SPLASH SCREEN -->
+<div id="splash-screen">
+    <div id="splash-title">VoiceSchedule</div>
+    <div id="splash-subtitle">Your schedule, spoken.</div>
+</div>
 
 <!-- LOGIN -->
 <div class="screen auth-screen active" id="screen-login">
@@ -445,6 +483,18 @@
     let editingEventId = null;
 
     window.onload = () => {
+        const splashTitle    = document.getElementById('splash-title');
+        const splashSubtitle = document.getElementById('splash-subtitle');
+        const splashScreen   = document.getElementById('splash-screen');
+        const urlToken = new URLSearchParams(window.location.search).get('token');
+        if (urlToken) {
+            splashScreen.style.display = 'none';
+        } else {
+            setTimeout(() => splashTitle.classList.add('visible'), 300);
+            setTimeout(() => splashSubtitle.classList.add('visible'), 1100);
+            setTimeout(() => splashScreen.classList.add('hidden'), 3500);
+            setTimeout(() => splashScreen.style.display = 'none', 4300);
+        }
         // Check if this is a password reset link
         const urlToken = new URLSearchParams(window.location.search).get('token');
         if (urlToken) {
