@@ -489,17 +489,13 @@
         const urlToken = new URLSearchParams(window.location.search).get('token');
         if (urlToken) {
             splashScreen.style.display = 'none';
+            showScreen('reset');
+            return;
         } else {
             setTimeout(() => splashTitle.classList.add('visible'), 300);
             setTimeout(() => splashSubtitle.classList.add('visible'), 1100);
             setTimeout(() => splashScreen.classList.add('hidden'), 3500);
             setTimeout(() => splashScreen.style.display = 'none', 4300);
-        }
-        // Check if this is a password reset link
-        const urlToken = new URLSearchParams(window.location.search).get('token');
-        if (urlToken) {
-            showScreen('reset');
-            return;
         }
         if (authToken) {
             showScreen('dashboard');
