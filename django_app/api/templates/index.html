@@ -20,6 +20,18 @@
         --accent-purp: #7c5cbf;
         --text: #ffffff;
         --text-dim: #8888aa;
+        --text-muted: #555572;
+        --border: #2a2a4a;
+        --border-hover: #3d3d62;
+
+        /* Type scale */
+        --text-xs:   0.75rem;
+        --text-sm:   0.875rem;
+        --text-base: 1rem;
+        --text-lg:   1.125rem;
+        --text-xl:   1.375rem;
+        --text-2xl:  clamp(1.75rem, 4vw, 2.25rem);
+        --text-3xl:  clamp(2rem, 5vw, 2.8rem);
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -27,59 +39,115 @@
         background-color: var(--bg-dark);
         color: var(--text);
         min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
     }
     .screen { display: none; min-height: 100vh; }
     .screen.active { display: flex; }
-    .auth-screen { justify-content: center; align-items: center; padding: 2rem; }
+
+    /* ─── AUTH ─── */
+    .auth-screen { justify-content: center; align-items: center; padding: 1.5rem; }
     .auth-card {
         background: var(--surface);
         border-radius: 24px;
-        padding: 3rem;
-        width: min(100%, 480px);
+        padding: clamp(2rem, 5vw, 3rem);
+        width: min(100%, 460px);
         display: grid;
-        gap: 1rem;
+        gap: 1.1rem;
+        border: 1px solid var(--border);
+        box-shadow: 0 0 0 1px rgba(0,212,255,0.04),
+                    0 24px 48px rgba(0,0,0,0.5);
+        position: relative;
+        overflow: hidden;
     }
-    .auth-card h1 { font-size: 2.5rem; font-weight: 300; margin-bottom: 0.25rem; }
-    .auth-card p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 0.5rem; }
-    label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-dim); }
+    /* subtle top glow */
+    .auth-card::before {
+        content: '';
+        position: absolute;
+        top: -1px; left: 10%; right: 10%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(0,212,255,0.4), transparent);
+    }
+    .auth-card-heading { margin-bottom: 0.25rem; }
+    .auth-card-heading h1 {
+        font-size: var(--text-2xl);
+        font-weight: 300;
+        letter-spacing: -0.02em;
+        line-height: 1.15;
+        margin-bottom: 0.35rem;
+    }
+    .auth-card-heading p {
+        color: var(--text-dim);
+        font-size: var(--text-sm);
+        font-weight: 400;
+    }
+
+    /* ─── FORM FIELDS ─── */
+    .field { display: grid; gap: 0.35rem; }
+    label {
+        font-size: var(--text-xs);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: 500;
+        color: var(--text-muted);
+    }
     input {
         width: 100%;
-        padding: 12px 16px;
+        padding: 11px 14px;
         background: var(--card);
-        border: 1px solid #2a2a4a;
+        border: 1px solid var(--border);
         border-radius: 10px;
-        font-size: 1rem;
+        font-size: var(--text-base);
         font-family: "Radio Canada", sans-serif;
         color: var(--text);
-        transition: border-color 0.2s;
+        transition: border-color 0.15s, box-shadow 0.15s;
     }
-    input:focus { outline: none; border-color: var(--accent-blue); }
+    input::placeholder { color: var(--text-muted); }
+    input:focus {
+        outline: none;
+        border-color: var(--accent-blue);
+        box-shadow: 0 0 0 3px rgba(74,158,255,0.12);
+    }
+
+    /* ─── BUTTONS ─── */
     .btn {
         cursor: pointer;
-        padding: 14px 20px;
+        padding: 13px 20px;
         border: 0;
-        border-radius: 12px;
-        font-size: 1rem;
+        border-radius: 10px;
+        font-size: var(--text-base);
         font-family: "Radio Canada", sans-serif;
         font-weight: 500;
         color: var(--text);
-        transition: opacity 0.2s, transform 0.1s;
+        transition: opacity 0.15s, transform 0.1s, box-shadow 0.15s;
+        letter-spacing: 0.01em;
     }
-    .btn:hover { opacity: 0.85; }
-    .btn:active { transform: scale(0.98); }
-    .btn-primary { background: var(--accent-blue); }
-    .btn-secondary { background: #2a2a4a; }
+    .btn:hover { opacity: 0.88; }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+        background: var(--accent-blue);
+        box-shadow: 0 4px 16px rgba(74,158,255,0.25);
+    }
+    .btn-primary:hover { box-shadow: 0 4px 20px rgba(74,158,255,0.4); }
+    .btn-secondary { background: #24244a; }
     .btn-danger { background: var(--accent-red); }
-    .btn-purple { background: var(--accent-purp); }
-    .btn-sm { padding: 8px 14px; font-size: 0.85rem; border-radius: 8px; }
-    .status { font-size: 0.9rem; min-height: 1.4em; text-align: center; }
-    .status.error { color: var(--accent-red); }
-    .status.success { color: var(--accent-green); }
-    .status.info { color: var(--accent-cyan); }
-    .link-row { text-align: center; font-size: 0.9rem; color: var(--text-dim); }
-    .link-row a { color: var(--accent-blue); text-decoration: none; cursor: pointer; }
+    .btn-purple {
+        background: var(--accent-purp);
+        box-shadow: 0 4px 16px rgba(124,92,191,0.25);
+    }
+    .btn-sm { padding: 7px 13px; font-size: var(--text-sm); border-radius: 8px; }
 
-    /* SPLASH SCREEN */
+    /* ─── STATUS ─── */
+    .status { font-size: var(--text-sm); min-height: 1.4em; text-align: center; }
+    .status.error   { color: var(--accent-red); }
+    .status.success { color: var(--accent-green); }
+    .status.info    { color: var(--accent-cyan); }
+
+    /* ─── LINK ROW ─── */
+    .link-row { text-align: center; font-size: var(--text-sm); color: var(--text-dim); }
+    .link-row a { color: var(--accent-blue); text-decoration: none; cursor: pointer; }
+    .link-row a:hover { text-decoration: underline; }
+
+    /* ─── SPLASH ─── */
     #splash-screen {
         position: fixed;
         inset: 0;
@@ -94,100 +162,221 @@
     }
     #splash-screen.hidden { opacity: 0; pointer-events: none; }
     #splash-title {
-        font-size: 2.8rem;
+        font-size: var(--text-3xl);
         font-weight: 300;
         color: var(--accent-cyan);
         opacity: 0;
         transition: opacity 1s ease;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.04em;
     }
     #splash-subtitle {
-        font-size: 1rem;
+        font-size: var(--text-base);
         color: var(--text-dim);
         opacity: 0;
         transition: opacity 0.8s ease;
-        letter-spacing: 0.1em;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-size: var(--text-xs);
     }
-    #splash-title.visible { opacity: 1; }
+    #splash-title.visible   { opacity: 1; }
     #splash-subtitle.visible { opacity: 1; }
 
-    /* DASHBOARD */
+    /* ─── DASHBOARD ─── */
     .dashboard-screen { flex-direction: column; }
     .topbar {
         background: var(--surface);
-        padding: 1rem 2rem;
+        padding: 0.875rem 1.75rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 1px solid #2a2a4a;
+        border-bottom: 1px solid var(--border);
+        gap: 1rem;
     }
-    .topbar h2 { font-size: 1.2rem; font-weight: 500; color: var(--accent-cyan); }
-    .topbar-right { display: flex; gap: 0.75rem; align-items: center; }
-    .username-badge { font-size: 0.85rem; color: var(--text-dim); }
-    .main-content { padding: 2rem; max-width: 800px; margin: 0 auto; width: 100%; }
+    .topbar h2 {
+        font-size: var(--text-base);
+        font-weight: 600;
+        color: var(--accent-cyan);
+        letter-spacing: 0.03em;
+        flex-shrink: 0;
+    }
+    .topbar-right {
+        display: flex;
+        gap: 0.625rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    .username-badge {
+        font-size: var(--text-xs);
+        color: var(--text-muted);
+        letter-spacing: 0.04em;
+    }
+    .main-content {
+        padding: clamp(1.25rem, 4vw, 2rem);
+        max-width: 800px;
+        margin: 0 auto;
+        width: 100%;
+    }
     .section-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 1.5rem;
+        gap: 1rem;
     }
-    .section-header h3 { font-size: 1.4rem; font-weight: 400; }
+    .section-header h3 {
+        font-size: var(--text-xl);
+        font-weight: 300;
+        letter-spacing: -0.01em;
+    }
+
+    /* ─── EVENT CARDS ─── */
     .event-card {
         background: var(--surface);
-        border-radius: 16px;
-        padding: 1.25rem 1.5rem;
-        margin-bottom: 1rem;
+        border-radius: 14px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 0.875rem;
         display: flex;
-        justify-content: space-between;
         align-items: flex-start;
         gap: 1rem;
-        border: 1px solid #2a2a4a;
-        transition: border-color 0.2s;
+        border: 1px solid var(--border);
+        transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
     }
-    .event-card:hover { border-color: #4a4a6a; }
-    .event-info { flex: 1; }
-    .event-title { font-size: 1.1rem; font-weight: 500; margin-bottom: 0.25rem; }
-    .event-datetime { font-size: 0.85rem; color: var(--accent-cyan); margin-bottom: 0.25rem; }
-    .event-desc { font-size: 0.85rem; color: var(--text-dim); }
-    .event-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
-    .no-events { text-align: center; color: var(--text-dim); padding: 3rem; font-size: 0.95rem; }
+    .event-card:hover {
+        border-color: var(--border-hover);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+    }
+    .event-date-block {
+        background: var(--card);
+        border-radius: 8px;
+        padding: 8px 10px;
+        text-align: center;
+        flex-shrink: 0;
+        min-width: 52px;
+        border: 1px solid var(--border);
+    }
+    .event-date-month {
+        font-size: var(--text-xs);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--accent-cyan);
+        line-height: 1;
+        margin-bottom: 2px;
+    }
+    .event-card:nth-child(3n+2) .event-date-month { color: var(--accent-pink); }
+    .event-card:nth-child(3n+3) .event-date-month { color: var(--accent-purp); }
+    .event-date-day {
+        font-size: 1.6rem;
+        font-weight: 300;
+        color: var(--text);
+        line-height: 1.1;
+    }
+    .event-info { flex: 1; min-width: 0; }
+    .event-title {
+        font-size: var(--text-base);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        margin-bottom: 3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .event-time {
+        font-size: var(--text-sm);
+        color: var(--text-dim);
+        margin-bottom: 5px;
+    }
+    .event-desc {
+        font-size: var(--text-sm);
+        color: var(--text-dim);
+        line-height: 1.5;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    .event-actions {
+        display: flex;
+        gap: 0.4rem;
+        flex-shrink: 0;
+        padding-top: 2px;
+    }
+    .no-events {
+        text-align: center;
+        color: var(--text-dim);
+        padding: 4rem 2rem;
+        font-size: var(--text-sm);
+        line-height: 1.7;
+    }
+    .no-events strong { display: block; font-size: var(--text-lg); color: var(--text); font-weight: 400; margin-bottom: 0.5rem; }
 
-    /* PROFILE */
+    /* ─── PROFILE ─── */
     .profile-card {
         background: var(--surface);
         border-radius: 16px;
         padding: 2rem;
         margin-bottom: 1rem;
-        border: 1px solid #2a2a4a;
+        border: 1px solid var(--border);
         display: grid;
-        gap: 1.25rem;
+        gap: 0;
     }
-    .profile-field label { display: block; margin-bottom: 0.25rem; }
-    .profile-field .value {
-        font-size: 1.1rem;
-        color: var(--text);
-        padding: 10px 0;
-        border-bottom: 1px solid #2a2a4a;
+    .profile-header {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 1.5rem;
     }
     .profile-avatar {
-        width: 80px;
-        height: 80px;
+        width: 72px;
+        height: 72px;
         border-radius: 50%;
-        background: var(--accent-purp);
+        background: linear-gradient(135deg, var(--accent-purp), #5533a0);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 2rem;
+        font-size: 1.75rem;
         font-weight: 500;
-        margin-bottom: 0.5rem;
+        flex-shrink: 0;
+        box-shadow: 0 0 0 3px rgba(124,92,191,0.25), 0 0 0 6px rgba(124,92,191,0.08);
+    }
+    .profile-name-block {}
+    .profile-name-block .display-name {
+        font-size: var(--text-xl);
+        font-weight: 400;
+        letter-spacing: -0.01em;
+        margin-bottom: 0.2rem;
+    }
+    .profile-name-block .username-sub {
+        font-size: var(--text-sm);
+        color: var(--text-muted);
+    }
+    .profile-fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem 1.5rem;
+    }
+    @media (max-width: 520px) {
+        .profile-fields { grid-template-columns: 1fr; }
+    }
+    .profile-field label { display: block; margin-bottom: 0.3rem; }
+    .profile-field .value {
+        font-size: var(--text-base);
+        color: var(--text);
+        padding: 9px 0;
+        border-bottom: 1px solid var(--border);
+        line-height: 1.4;
     }
 
-    /* MODAL */
+    /* ─── MODAL ─── */
     .modal-overlay {
         display: none;
         position: fixed;
         inset: 0;
-        background: rgba(0,0,0,0.7);
+        background: rgba(0,0,0,0.72);
+        backdrop-filter: blur(4px);
         justify-content: center;
         align-items: center;
         z-index: 100;
@@ -198,11 +387,18 @@
         background: var(--surface);
         border-radius: 20px;
         padding: 2rem;
-        width: min(100%, 480px);
+        width: min(100%, 460px);
         display: grid;
         gap: 1rem;
+        border: 1px solid var(--border);
+        box-shadow: 0 32px 64px rgba(0,0,0,0.6);
     }
-    .modal h3 { font-size: 1.4rem; font-weight: 400; }
+    .modal-heading { margin-bottom: 0.25rem; }
+    .modal-heading h3 {
+        font-size: var(--text-xl);
+        font-weight: 400;
+        letter-spacing: -0.01em;
+    }
     .modal-actions { display: flex; gap: 0.75rem; }
     .modal-actions .btn { flex: 1; }
     .loading {
@@ -210,7 +406,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 2rem;
+        padding: 2.5rem;
         gap: 1rem;
         color: var(--text-dim);
         font-size: 0.9rem;
@@ -257,15 +453,15 @@
 <!-- LOGIN -->
 <div class="screen auth-screen active" id="screen-login">
     <div class="auth-card">
-        <div>
+        <div class="auth-card-heading">
             <h1>Welcome Back</h1>
             <p>Sign in to continue</p>
         </div>
-        <div>
+        <div class="field">
             <label for="login-username">Username</label>
             <input type="text" id="login-username" placeholder="Enter your username" tabindex="1" autocomplete="username">
         </div>
-        <div>
+        <div class="field">
             <label for="login-password">Password</label>
             <input type="password" id="login-password" placeholder="Enter your password" tabindex="2" autocomplete="current-password">
         </div>
@@ -283,27 +479,27 @@
 <!-- REGISTER -->
 <div class="screen auth-screen" id="screen-register">
     <div class="auth-card">
-        <div>
+        <div class="auth-card-heading">
             <h1>Create Account</h1>
             <p>Sign up to get started</p>
         </div>
-        <div>
+        <div class="field">
             <label for="reg-username">Username</label>
             <input type="text" id="reg-username" placeholder="Choose a username" tabindex="1" autocomplete="username">
         </div>
-        <div>
+        <div class="field">
             <label for="reg-password">Password</label>
             <input type="password" id="reg-password" placeholder="Choose a password" tabindex="2" autocomplete="new-password">
         </div>
-        <div>
+        <div class="field">
             <label for="reg-name">Full Name</label>
             <input type="text" id="reg-name" placeholder="Enter your full name" tabindex="3" autocomplete="name">
         </div>
-        <div>
+        <div class="field">
             <label for="reg-email">Email Address</label>
             <input type="email" id="reg-email" placeholder="Enter your email" tabindex="4" autocomplete="email">
         </div>
-        <div>
+        <div class="field">
             <label for="reg-phone">Phone Number</label>
             <input type="tel" id="reg-phone" placeholder="Enter your phone number" tabindex="5" autocomplete="tel">
         </div>
@@ -319,11 +515,11 @@
 <!-- FORGOT PASSWORD -->
 <div class="screen auth-screen" id="screen-forgot">
     <div class="auth-card">
-        <div>
+        <div class="auth-card-heading">
             <h1>Reset Password</h1>
             <p>Enter your email to receive a reset link</p>
         </div>
-        <div>
+        <div class="field">
             <label for="forgot-email">Email Address</label>
             <input type="email" id="forgot-email" placeholder="Enter your email" tabindex="1" autocomplete="email">
         </div>
@@ -338,15 +534,15 @@
 <!-- RESET PASSWORD -->
 <div class="screen auth-screen" id="screen-reset">
     <div class="auth-card">
-        <div>
+        <div class="auth-card-heading">
             <h1>New Password</h1>
             <p>Enter your new password below</p>
         </div>
-        <div>
+        <div class="field">
             <label for="reset-password">New Password</label>
             <input type="password" id="reset-password" placeholder="Enter new password" tabindex="1" autocomplete="new-password">
         </div>
-        <div>
+        <div class="field">
             <label for="reset-confirm">Confirm Password</label>
             <input type="password" id="reset-confirm" placeholder="Confirm new password" tabindex="2" autocomplete="new-password">
         </div>
@@ -399,20 +595,20 @@
 <!-- ADD EVENT MODAL -->
 <div class="modal-overlay" id="modal-add">
     <div class="modal">
-        <h3>Add Event</h3>
-        <div>
+        <div class="modal-heading"><h3>Add Event</h3></div>
+        <div class="field">
             <label for="add-title">Title</label>
             <input type="text" id="add-title" placeholder="Event title" tabindex="1">
         </div>
-        <div>
+        <div class="field">
             <label for="add-date">Date</label>
             <input type="date" id="add-date" tabindex="2">
         </div>
-        <div>
+        <div class="field">
             <label for="add-time">Time</label>
             <input type="time" id="add-time" tabindex="3">
         </div>
-        <div>
+        <div class="field">
             <label for="add-desc">Description</label>
             <input type="text" id="add-desc" placeholder="Optional description" tabindex="4">
         </div>
@@ -427,20 +623,20 @@
 <!-- EDIT EVENT MODAL -->
 <div class="modal-overlay" id="modal-edit">
     <div class="modal">
-        <h3>Edit Event</h3>
-        <div>
+        <div class="modal-heading"><h3>Edit Event</h3></div>
+        <div class="field">
             <label for="edit-title">Title</label>
             <input type="text" id="edit-title" placeholder="Event title" tabindex="1">
         </div>
-        <div>
+        <div class="field">
             <label for="edit-date">Date</label>
             <input type="date" id="edit-date" tabindex="2">
         </div>
-        <div>
+        <div class="field">
             <label for="edit-time">Time</label>
             <input type="time" id="edit-time" tabindex="3">
         </div>
-        <div>
+        <div class="field">
             <label for="edit-desc">Description</label>
             <input type="text" id="edit-desc" placeholder="Optional description" tabindex="4">
         </div>
@@ -455,16 +651,16 @@
 <!-- CHANGE PASSWORD MODAL -->
 <div class="modal-overlay" id="modal-change-password">
     <div class="modal">
-        <h3>Change Password</h3>
-        <div>
+        <div class="modal-heading"><h3>Change Password</h3></div>
+        <div class="field">
             <label for="old-password">Current Password</label>
             <input type="password" id="old-password" placeholder="Enter current password" tabindex="1">
         </div>
-        <div>
+        <div class="field">
             <label for="new-password">New Password</label>
             <input type="password" id="new-password" placeholder="Enter new password" tabindex="2">
         </div>
-        <div>
+        <div class="field">
             <label for="confirm-password">Confirm New Password</label>
             <input type="password" id="confirm-password" placeholder="Confirm new password" tabindex="3">
         </div>
@@ -642,22 +838,29 @@
     function renderEvents(events) {
         const list = document.getElementById('events-list');
         if (!events.length) {
-            list.innerHTML = '<div class="no-events">No events yet. Click + Add Event to create one.</div>';
+            list.innerHTML = '<div class="no-events"><strong>No events yet</strong>Tap + Add Event to schedule your first one.</div>';
             return;
         }
-        list.innerHTML = events.map(e => `
+        list.innerHTML = events.map(e => {
+            const [year, month, day] = e.date.split('-');
+            const monthName = new Date(e.date + 'T00:00:00').toLocaleString('default', { month: 'short' });
+            return `
             <div class="event-card">
+                <div class="event-date-block">
+                    <div class="event-date-month">${monthName}</div>
+                    <div class="event-date-day">${parseInt(day)}</div>
+                </div>
                 <div class="event-info">
                     <div class="event-title">${e.title}</div>
-                    <div class="event-datetime">${formatDate(e.date)} at ${formatTime(e.time)}</div>
+                    <div class="event-time">${formatTime(e.time)}</div>
                     ${e.description ? `<div class="event-desc">${e.description}</div>` : ''}
                 </div>
                 <div class="event-actions">
                     <button class="btn btn-purple btn-sm" onclick="openEditModal(${JSON.stringify(e).replace(/"/g, '&quot;')})">Edit</button>
-                    <button class="btn btn-danger btn-sm" onclick="doDeleteEvent(${e.id})">Del</button>
+                    <button class="btn btn-danger btn-sm" onclick="doDeleteEvent(${e.id})">Delete</button>
                 </div>
             </div>
-        `).join('');
+        `}).join('');
     }
 
     async function showProfile() {
@@ -671,23 +874,28 @@
             const user = users[0];
             if (user) {
                 const initial = (user.name || currentUsername).charAt(0).toUpperCase();
+                const displayName = user.name || currentUsername;
                 document.getElementById('profile-card').innerHTML = `
-                    <div class="profile-avatar">${initial}</div>
-                    <div class="profile-field">
-                        <label>Full Name</label>
-                        <div class="value">${user.name || '—'}</div>
+                    <div class="profile-header">
+                        <div class="profile-avatar">${initial}</div>
+                        <div class="profile-name-block">
+                            <div class="display-name">${displayName}</div>
+                            <div class="username-sub">@${currentUsername}</div>
+                        </div>
                     </div>
-                    <div class="profile-field">
-                        <label>Email</label>
-                        <div class="value">${user.email || '—'}</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Phone</label>
-                        <div class="value">${user.phone || '—'}</div>
-                    </div>
-                    <div class="profile-field">
-                        <label>Member Since</label>
-                        <div class="value">${new Date(user.date_registered).toLocaleDateString()}</div>
+                    <div class="profile-fields">
+                        <div class="profile-field">
+                            <label>Email</label>
+                            <div class="value">${user.email || '—'}</div>
+                        </div>
+                        <div class="profile-field">
+                            <label>Phone</label>
+                            <div class="value">${user.phone || '—'}</div>
+                        </div>
+                        <div class="profile-field">
+                            <label>Member Since</label>
+                            <div class="value">${new Date(user.date_registered).toLocaleDateString()}</div>
+                        </div>
                     </div>
                 `;
             }
