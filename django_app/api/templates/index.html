@@ -299,8 +299,7 @@
     .event-actions {
         display: flex;
         gap: 0.4rem;
-        flex-shrink: 0;
-        padding-top: 2px;
+        margin-top: 8px;
     }
     .no-events {
         text-align: center;
@@ -854,10 +853,10 @@
                     <div class="event-title">${e.title}</div>
                     <div class="event-time">${formatTime(e.time)}</div>
                     ${e.description ? `<div class="event-desc">${e.description}</div>` : ''}
-                </div>
-                <div class="event-actions">
-                    <button class="btn btn-purple btn-sm" onclick="openEditModal(${JSON.stringify(e).replace(/"/g, '&quot;')})">Edit</button>
-                    <button class="btn btn-danger btn-sm" onclick="doDeleteEvent(${e.id})">Delete</button>
+                    <div class="event-actions">
+                        <button class="btn btn-purple btn-sm" onclick="openEditModal(${JSON.stringify(e).replace(/"/g, '&quot;')})">Edit</button>
+                        <button class="btn btn-danger btn-sm" onclick="doDeleteEvent(${e.id})">Delete</button>
+                    </div>
                 </div>
             </div>
         `}).join('');
