@@ -1,6 +1,9 @@
 import os
 from django.shortcuts import render
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.utils.decorators import method_decorator
+from django_ratelimit.decorators import ratelimit
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -9,6 +12,35 @@ from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from .models import UserProfile, Event
 from .serializers import UserProfileSerializer, EventSerializer
+
+
+class LoginView(APIView):
+    """
+    Rate-limited login endpoint — max 5 attempts per IP per minute.
+    Replaces the bare /api/token/ endpoint for brute-force protection.
+    """
+    permission_classes = [AllowAny]
+
+    @method_decorator(ratelimit(key='ip', rate='5/m', method='POST', block=True))
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+
+        if not username or not password:
+            return Response(
+                {"error": "Username and password are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user = authenticate(username=username, password=password)
+        if user is None:
+            return Response(
+                {"error": "Invalid credentials."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({"token": token.key, "username": user.username}, status=status.HTTP_200_OK)
 
 
 class RegisterView(APIView):
@@ -162,7 +194,8 @@ class CreateSuperUserView(APIView):
 
     def post(self, request):
         secret = request.data.get("secret")
-        if secret != "myapp-admin-2026":
+        expected = os.getenv("SUPERUSER_SECRET")
+        if not expected or secret != expected:
             return Response({"error": "Unauthorized"}, status=status.HTTP_403_FORBIDDEN)
         username = request.data.get("username")
         password = request.data.get("password")
