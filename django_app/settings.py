@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_ratelimit',       # pip install django-ratelimit
     'django_app.api',
 ]
 
@@ -123,3 +124,34 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 }
+
+# ── Security Hardening ────────────────────────────────────────────────────────
+# Enforce SECRET_KEY is always loaded from the environment; never fall back to
+# a randomly generated value at runtime (which would invalidate all sessions on
+# every restart).
+if not os.getenv("DJANGO_SECRET_KEY"):
+    raise Exception(
+        "DJANGO_SECRET_KEY environment variable is not set. "
+        "Generate one with: python -c \"from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())\""
+    )
+
+# HTTPS / cookie security (safe to set even in dev — only activated by browsers
+# when the site is served over HTTPS).
+SECURE_SSL_REDIRECT = not DEVELOPMENT_MODE          # redirect HTTP → HTTPS in prod
+SECURE_HSTS_SECONDS = 31536000                      # 1 year HSTS header
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = 'DENY'
+
+SESSION_COOKIE_SECURE = not DEVELOPMENT_MODE        # only send session cookie over HTTPS
+SESSION_COOKIE_HTTPONLY = True                      # block JS access to session cookie
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_AGE = 1800                           # 30 min server-side session timeout
+
+CSRF_COOKIE_SECURE = not DEVELOPMENT_MODE
+CSRF_COOKIE_HTTPONLY = True
+
+# Rate limiting via django-ratelimit (registered in INSTALLED_APPS above).
+RATELIMIT_USE_CACHE = 'default'
