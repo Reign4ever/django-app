@@ -91,11 +91,17 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Cache Configuration
+# 'default' uses LocMemCache — required by django-ratelimit (DatabaseCache
+# doesn't support atomic increment). A separate 'db' cache is kept for any
+# other code that previously relied on DatabaseCache.
 CACHES = {
     "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    },
+    "db": {
         "BACKEND": "django.core.cache.backends.db.DatabaseCache",
         "LOCATION": "cache_table",
-    }
+    },
 }
 
 # Email Configuration
