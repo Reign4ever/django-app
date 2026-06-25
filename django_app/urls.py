@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
-from rest_framework.authtoken.views import obtain_auth_token
+from django_app.api.views import LoginView   # rate-limited; replaces obtain_auth_token
 from django.http import HttpResponseRedirect
 
 def root_redirect(request):
@@ -29,7 +29,7 @@ def root_redirect(request):
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('django_app.api.urls')),
-    path('api/token/', obtain_auth_token, name='api_token_auth'),
+    path('api/token/', LoginView.as_view(), name='api_token_auth'),  # rate-limited login
     path('', root_redirect),
 ]
 
