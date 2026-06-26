@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'django_ratelimit',       # pip install django-ratelimit
     'django_app.api',
 ]
 
@@ -91,17 +90,11 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Cache Configuration
-# 'default' uses LocMemCache — required by django-ratelimit (DatabaseCache
-# doesn't support atomic increment). A separate 'db' cache is kept for any
-# other code that previously relied on DatabaseCache.
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-    },
-    "db": {
         "BACKEND": "django.core.cache.backends.db.DatabaseCache",
         "LOCATION": "cache_table",
-    },
+    }
 }
 
 # Email Configuration
@@ -159,5 +152,5 @@ SESSION_COOKIE_AGE = 1800                           # 30 min server-side session
 CSRF_COOKIE_SECURE = not DEVELOPMENT_MODE
 CSRF_COOKIE_HTTPONLY = True
 
-# Rate limiting via django-ratelimit (registered in INSTALLED_APPS above).
-RATELIMIT_USE_CACHE = 'default'
+# Rate limiting requires a paid Redis cache on Render.
+# Add django-ratelimit and configure Redis here when upgrading.
