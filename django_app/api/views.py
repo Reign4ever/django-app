@@ -2,8 +2,6 @@ import os
 from django.shortcuts import render
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from django.utils.decorators import method_decorator
-from django_ratelimit.decorators import ratelimit
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -16,12 +14,12 @@ from .serializers import UserProfileSerializer, EventSerializer
 
 class LoginView(APIView):
     """
-    Rate-limited login endpoint — max 5 attempts per IP per minute.
-    Replaces the bare /api/token/ endpoint for brute-force protection.
+    Dedicated login endpoint using Django's authenticate().
+    Rate limiting requires a paid Redis cache — add django-ratelimit
+    and switch CACHES to Redis when available.
     """
     permission_classes = [AllowAny]
 
-    @method_decorator(ratelimit(key='ip', rate='5/m', method='POST', block=True))
     def post(self, request):
         username = request.data.get("username")
         password = request.data.get("password")
