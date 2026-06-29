@@ -1,4 +1,5 @@
 import os
+import requests
 from django.shortcuts import render
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -12,6 +13,26 @@ from .models import UserProfile, Event
 from .serializers import UserProfileSerializer, EventSerializer
 
 
+def verify_turnstile(token, remote_ip=None):
+    """Verify a Cloudflare Turnstile token. Returns True if valid."""
+    secret = os.environ.get("TURNSTILE_SECRET_KEY")
+    if not secret:
+        # If no secret is configured, skip verification (e.g. local dev)
+        return True
+    data = {"secret": secret, "response": token}
+    if remote_ip:
+        data["remoteip"] = remote_ip
+    try:
+        resp = requests.post(
+            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+            data=data,
+            timeout=5,
+        )
+        return resp.json().get("success", False)
+    except Exception:
+        return False
+
+
 class LoginView(APIView):
     """
     Dedicated login endpoint using Django's authenticate().
@@ -23,10 +44,17 @@ class LoginView(APIView):
     def post(self, request):
         username = request.data.get("username")
         password = request.data.get("password")
+        turnstile_token = request.data.get("turnstile_token")
 
         if not username or not password:
             return Response(
                 {"error": "Username and password are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if not turnstile_token or not verify_turnstile(turnstile_token, request.META.get("REMOTE_ADDR")):
+            return Response(
+                {"error": "Security check failed. Please try again."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -50,12 +78,20 @@ class RegisterView(APIView):
         email    = request.data.get("email", "")
         name     = request.data.get("name", "")
         phone    = request.data.get("phone", "")
+        turnstile_token = request.data.get("turnstile_token")
 
         if not username or not password:
             return Response(
                 {"error": "Username and password are required."},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+        if not turnstile_token or not verify_turnstile(turnstile_token, request.META.get("REMOTE_ADDR")):
+            return Response(
+                {"error": "Security check failed. Please try again."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         if User.objects.filter(username=username).exists():
             return Response(
                 {"error": "Username already exists."},
