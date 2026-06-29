@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Radio+Canada:wght@300;400;500&display=swap" rel="stylesheet">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
     :root {
         --bg-dark: #0d0d14;
@@ -421,6 +422,7 @@
     @keyframes spin {
         to { transform: rotate(360deg); }
     }
+    .turnstile-wrap { display: flex; justify-content: center; }
     .btn-loading {
         position: relative;
         color: transparent !important;
@@ -464,6 +466,9 @@
             <label for="login-password">Password</label>
             <input type="password" id="login-password" placeholder="Enter your password" tabindex="2" autocomplete="current-password">
         </div>
+        <div class="turnstile-wrap">
+            <div class="cf-turnstile" id="login-turnstile" data-sitekey="0x4AAAAAADsIe7tCS1W0mcag" data-theme="dark"></div>
+        </div>
         <div class="status" id="login-status"></div>
         <button class="btn btn-primary" tabindex="3" onclick="doLogin()">Sign In</button>
         <div class="link-row">
@@ -501,6 +506,9 @@
         <div class="field">
             <label for="reg-phone">Phone Number</label>
             <input type="tel" id="reg-phone" placeholder="Enter your phone number" tabindex="5" autocomplete="tel">
+        </div>
+        <div class="turnstile-wrap">
+            <div class="cf-turnstile" id="register-turnstile" data-sitekey="0x4AAAAAADsIe7tCS1W0mcag" data-theme="dark"></div>
         </div>
         <div class="status" id="register-status"></div>
         <button class="btn btn-primary" tabindex="6" onclick="doRegister()">Sign Up</button>
@@ -745,6 +753,11 @@
             setStatus('login-status', 'Username and password are required.', 'error');
             return;
         }
+        const turnstileToken = document.querySelector('#login-turnstile [name="cf-turnstile-response"]')?.value;
+        if (!turnstileToken) {
+            setStatus('login-status', 'Please complete the security check.', 'error');
+            return;
+        }
         setStatus('login-status', '', '');
         const loginBtn = document.querySelector('#screen-login .btn-primary');
         loginBtn.classList.add('btn-loading');
@@ -752,7 +765,7 @@
             const resp = await fetch(`${BASE_URL}/api/token/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
+                body: JSON.stringify({ username, password, turnstile_token: turnstileToken })
             });
             const data = await resp.json();
             if (resp.ok) {
@@ -769,6 +782,7 @@
                 loadEvents();
             } else {
                 setStatus('login-status', 'Invalid credentials.', 'error');
+                if (window.turnstile) turnstile.reset('#login-turnstile');
             }
         } catch (e) {
             setStatus('login-status', 'Connection error.', 'error');
@@ -785,12 +799,17 @@
             setStatus('register-status', 'Username and password are required.', 'error');
             return;
         }
+        const turnstileToken = document.querySelector('#register-turnstile [name="cf-turnstile-response"]')?.value;
+        if (!turnstileToken) {
+            setStatus('register-status', 'Please complete the security check.', 'error');
+            return;
+        }
         setStatus('register-status', 'Creating account…', 'info');
         try {
             const resp = await fetch(`${BASE_URL}/api/register/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password, name, email, phone })
+                body: JSON.stringify({ username, password, name, email, phone, turnstile_token: turnstileToken })
             });
             const data = await resp.json();
             if (resp.ok) {
@@ -806,6 +825,7 @@
                 loadEvents();
             } else {
                 setStatus('register-status', data.error || 'Registration failed.', 'error');
+                if (window.turnstile) turnstile.reset('#register-turnstile');
             }
         } catch (e) {
             setStatus('register-status', 'Connection error.', 'error');
