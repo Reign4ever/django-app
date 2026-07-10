@@ -467,7 +467,7 @@
             <input type="password" id="login-password" placeholder="Enter your password" tabindex="2" autocomplete="current-password">
         </div>
         <div class="turnstile-wrap">
-            <div class="cf-turnstile" id="login-turnstile" data-sitekey="0x4AAAAAADsIe7tCS1W0mcag" data-theme="dark"></div>
+            <div class="cf-turnstile" id="login-turnstile" data-sitekey="0x4AAAAAADsIe7tCS1W0mcag" data-theme="dark" data-callback="onLoginTurnstileSuccess" data-expired-callback="onLoginTurnstileExpired"></div>
         </div>
         <div class="status" id="login-status"></div>
         <button class="btn btn-primary" tabindex="3" onclick="doLogin()">Sign In</button>
@@ -508,7 +508,7 @@
             <input type="tel" id="reg-phone" placeholder="Enter your phone number" tabindex="5" autocomplete="tel">
         </div>
         <div class="turnstile-wrap">
-            <div class="cf-turnstile" id="register-turnstile" data-sitekey="0x4AAAAAADsIe7tCS1W0mcag" data-theme="dark"></div>
+            <div class="cf-turnstile" id="register-turnstile" data-sitekey="0x4AAAAAADsIe7tCS1W0mcag" data-theme="dark" data-callback="onRegisterTurnstileSuccess" data-expired-callback="onRegisterTurnstileExpired"></div>
         </div>
         <div class="status" id="register-status"></div>
         <button class="btn btn-primary" tabindex="6" onclick="doRegister()">Sign Up</button>
@@ -753,7 +753,7 @@
             setStatus('login-status', 'Username and password are required.', 'error');
             return;
         }
-        const turnstileToken = document.querySelector('#login-turnstile [name="cf-turnstile-response"]')?.value;
+        const turnstileToken = window._loginTurnstileToken;
         if (!turnstileToken) {
             setStatus('login-status', 'Please complete the security check.', 'error');
             return;
@@ -782,7 +782,7 @@
                 loadEvents();
             } else {
                 setStatus('login-status', 'Invalid credentials.', 'error');
-                if (window.turnstile) turnstile.reset('#login-turnstile');
+                if (window.turnstile) { turnstile.reset('#login-turnstile'); window._loginTurnstileToken = null; }
             }
         } catch (e) {
             setStatus('login-status', 'Connection error.', 'error');
@@ -799,7 +799,7 @@
             setStatus('register-status', 'Username and password are required.', 'error');
             return;
         }
-        const turnstileToken = document.querySelector('#register-turnstile [name="cf-turnstile-response"]')?.value;
+        const turnstileToken = window._registerTurnstileToken;
         if (!turnstileToken) {
             setStatus('register-status', 'Please complete the security check.', 'error');
             return;
@@ -825,7 +825,7 @@
                 loadEvents();
             } else {
                 setStatus('register-status', data.error || 'Registration failed.', 'error');
-                if (window.turnstile) turnstile.reset('#register-turnstile');
+                if (window.turnstile) { turnstile.reset('#register-turnstile'); window._registerTurnstileToken = null; }
             }
         } catch (e) {
             setStatus('register-status', 'Connection error.', 'error');
@@ -1160,6 +1160,12 @@
             if (e.target === overlay) overlay.classList.remove('active');
         });
     });
+
+    // Turnstile callbacks — store tokens in window variables to avoid cross-origin iframe issues
+    function onLoginTurnstileSuccess(token) { window._loginTurnstileToken = token; }
+    function onLoginTurnstileExpired() { window._loginTurnstileToken = null; }
+    function onRegisterTurnstileSuccess(token) { window._registerTurnstileToken = token; }
+    function onRegisterTurnstileExpired() { window._registerTurnstileToken = null; }
 </script>
 </body>
 </html>
