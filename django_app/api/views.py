@@ -1,5 +1,4 @@
 import os
-import requests
 from django.shortcuts import render
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
@@ -13,26 +12,6 @@ from .models import UserProfile, Event
 from .serializers import UserProfileSerializer, EventSerializer
 
 
-def verify_turnstile(token, remote_ip=None):
-    """Verify a Cloudflare Turnstile token. Returns True if valid."""
-    secret = os.environ.get("TURNSTILE_SECRET_KEY")
-    if not secret:
-        # If no secret is configured, skip verification (e.g. local dev)
-        return True
-    data = {"secret": secret, "response": token}
-    if remote_ip:
-        data["remoteip"] = remote_ip
-    try:
-        resp = requests.post(
-            "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-            data=data,
-            timeout=5,
-        )
-        return resp.json().get("success", False)
-    except Exception:
-        return False
-
-
 class LoginView(APIView):
     """
     Dedicated login endpoint using Django's authenticate().
@@ -44,17 +23,10 @@ class LoginView(APIView):
     def post(self, request):
         username = request.data.get("username")
         password = request.data.get("password")
-        turnstile_token = request.data.get("turnstile_token")
 
         if not username or not password:
             return Response(
                 {"error": "Username and password are required."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        if not turnstile_token or not verify_turnstile(turnstile_token, request.META.get("REMOTE_ADDR")):
-            return Response(
-                {"error": "Security check failed. Please try again."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -78,7 +50,42 @@ class RegisterView(APIView):
         email    = request.data.get("email", "")
         name     = request.data.get("name", "")
         phone    = request.data.get("phone", "")
-        turnstile_token = request.data.get("turnstile_token")
+
+        if not username or not password:
+            return Response(
+                {"error": "Username and password are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        if User.objects.filter(username=username).exists():
+            return Response(
+                {"error": "Username already exists."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        user  = User.objects.create_user(username=username, password=password, email=email)
+        token = Token.objects.create(user=user)
+        UserProfile.objects.create(user=user, name=name, email=email, phone=phone)
+        return Response({"token": token.key, "username": username}, status=status.HTTP_201_CREATED)
+
+
+def verify_mobile_secret(request):
+    """Verify the shared mobile secret header. Returns True if valid."""
+    secret = os.environ.get("MOBILE_API_SECRET")
+    if not secret:
+        return False
+    return request.headers.get("X-Mobile-Secret") == secret
+
+
+class MobileLoginView(APIView):
+    """Login endpoint for Kivy mobile app, protected by shared secret header."""
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        if not verify_mobile_secret(request):
+            return Response({"error": "Unauthorized."}, status=status.HTTP_403_FORBIDDEN)
+
+        username = request.data.get("username")
+        password = request.data.get("password")
 
         if not username or not password:
             return Response(
@@ -86,12 +93,36 @@ class RegisterView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        if not turnstile_token or not verify_turnstile(turnstile_token, request.META.get("REMOTE_ADDR")):
+        user = authenticate(username=username, password=password)
+        if user is None:
             return Response(
-                {"error": "Security check failed. Please try again."},
-                status=status.HTTP_400_BAD_REQUEST
+                {"error": "Invalid credentials."},
+                status=status.HTTP_401_UNAUTHORIZED
             )
 
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({"token": token.key, "username": user.username}, status=status.HTTP_200_OK)
+
+
+class MobileRegisterView(APIView):
+    """Register endpoint for Kivy mobile app, protected by shared secret header."""
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        if not verify_mobile_secret(request):
+            return Response({"error": "Unauthorized."}, status=status.HTTP_403_FORBIDDEN)
+
+        username = request.data.get("username")
+        password = request.data.get("password")
+        email    = request.data.get("email", "")
+        name     = request.data.get("name", "")
+        phone    = request.data.get("phone", "")
+
+        if not username or not password:
+            return Response(
+                {"error": "Username and password are required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         if User.objects.filter(username=username).exists():
             return Response(
                 {"error": "Username already exists."},
