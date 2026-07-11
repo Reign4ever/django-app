@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'csp.middleware.CSPMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -154,3 +155,33 @@ CSRF_COOKIE_HTTPONLY = True
 
 # Rate limiting requires a paid Redis cache on Render.
 # Add django-ratelimit and configure Redis here when upgrading.
+
+# ── Content Security Policy ───────────────────────────────────────────────────
+# Restricts which sources browsers trust for scripts, styles, fonts, etc.
+# This addresses the OWASP ZAP alerts for CSP, cross-domain JS, and subresource integrity.
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = (
+    "'self'",
+    "https://challenges.cloudflare.com",  # Cloudflare Turnstile
+    "https://fonts.googleapis.com",
+)
+CSP_STYLE_SRC = (
+    "'self'",
+    "'unsafe-inline'",                    # needed for inline styles in index.html
+    "https://fonts.googleapis.com",
+)
+CSP_FONT_SRC = (
+    "'self'",
+    "https://fonts.gstatic.com",          # Google Fonts
+)
+CSP_FRAME_SRC = (
+    "'self'",
+    "https://challenges.cloudflare.com",  # Turnstile renders in an iframe
+)
+CSP_IMG_SRC = ("'self'", "data:")
+CSP_CONNECT_SRC = (
+    "'self'",
+    "https://django-app-tnbd.onrender.com",
+)
+CSP_BASE_URI = ("'self'",)
+CSP_FORM_ACTION = ("'self'",)
