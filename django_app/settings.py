@@ -41,7 +41,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'csp.middleware.CSPMiddleware',
-    'django_permissions_policy.PermissionsPolicyMiddleware',
+    'django_app.settings.PermissionsPolicyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -193,11 +193,16 @@ SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 # ── Permissions Policy ────────────────────────────────────────────────────────
 # Disable browser features your app doesn't need.
-PERMISSIONS_POLICY = {
-    "camera": [],
-    "microphone": [],
-    "geolocation": [],
-    "payment": [],
-    "usb": [],
-    "fullscreen": ["self"],
-}
+# Implemented as a simple inline middleware to avoid external package dependency.
+class PermissionsPolicyMiddleware:
+    POLICY = (
+        "camera=(), microphone=(), geolocation=(), payment=(), usb=(), fullscreen=(self)"
+    )
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        response["Permissions-Policy"] = self.POLICY
+        return response
