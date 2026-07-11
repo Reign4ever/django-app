@@ -41,6 +41,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'csp.middleware.CSPMiddleware',
+    'django_permissions_policy.PermissionsPolicyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -185,3 +186,18 @@ CSP_CONNECT_SRC = (
 )
 CSP_BASE_URI = ("'self'",)
 CSP_FORM_ACTION = ("'self'",)
+
+# ── Referrer Policy ───────────────────────────────────────────────────────────
+# Only send the origin (no path) when navigating to other sites over HTTPS.
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+
+# ── Permissions Policy ────────────────────────────────────────────────────────
+# Disable browser features your app doesn't need.
+PERMISSIONS_POLICY = {
+    "camera": [],
+    "microphone": [],
+    "geolocation": [],
+    "payment": [],
+    "usb": [],
+    "fullscreen": ["self"],
+}
