@@ -162,7 +162,7 @@ CSRF_COOKIE_HTTPONLY = True
 # This addresses the OWASP ZAP alerts for CSP, cross-domain JS, and subresource integrity.
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = (
-    "'self'",
+    "'self'", "'unsafe-inline'",
     "https://challenges.cloudflare.com",  # Cloudflare Turnstile
     "https://fonts.googleapis.com",
 )
