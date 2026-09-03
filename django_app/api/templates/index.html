@@ -477,6 +477,9 @@
         <div class="link-row">
             <a onclick="showScreen('forgot')">Forgot Password?</a>
         </div>
+        <div class="link-row">
+            <a onclick="showScreen('forgot-username')">Forgot Username?</a>
+        </div>
     </div>
 </div>
 
@@ -538,6 +541,27 @@
     </div>
 </div>
 
+
+<!-- FORGOT USERNAME -->
+<div class="screen auth-screen" id="screen-forgot-username">
+    <div class="auth-card">
+        <div class="auth-card-heading">
+            <h1>Forgot Username</h1>
+            <p>Enter your email and we'll send your username</p>
+        </div>
+        <div class="field">
+            <label for="forgot-username-email">Email Address</label>
+            <input type="email" id="forgot-username-email" placeholder="Enter your email" tabindex="1" autocomplete="email">
+        </div>
+        <div class="status" id="forgot-username-status"></div>
+        <button class="btn btn-primary" tabindex="2" onclick="doForgotUsername()">Send Username</button>
+        <div class="link-row">
+            <a onclick="showScreen('login')">← Back to Sign In</a>
+        </div>
+    </div>
+</div>
+
+    
 <!-- RESET PASSWORD -->
 <div class="screen auth-screen" id="screen-reset">
     <div class="auth-card">
