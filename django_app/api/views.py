@@ -10,6 +10,39 @@ from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from .models import UserProfile, Event
 from .serializers import UserProfileSerializer, EventSerializer
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+import json
+
+@csrf_exempt
+@require_POST
+def forgot_username(request):
+    try:
+        data = json.loads(request.body)
+        email = data.get('email', '').strip()
+
+        if not email:
+            return JsonResponse({'error': 'Email is required.'}, status=400)
+
+        users = User.objects.filter(email__iexact=email)
+
+        if users.exists():
+            usernames = [u.username for u in users]
+            send_mail(
+                subject='Your Username',
+                message='Your username(s) associated with this email:\n\n' + '\n'.join(usernames),
+                from_email=None,
+                recipient_list=[email],
+                fail_silently=False,
+            )
+
+        # Always return success to prevent email enumeration
+        return JsonResponse({'message': 'If this email is registered, your username has been sent.'})
+
+    except Exception as e:
+        return JsonResponse({'error': 'Something went wrong.'}, status=500)
 
 
 class LoginView(APIView):
