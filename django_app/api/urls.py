@@ -7,6 +7,7 @@ urlpatterns = [
     path("mobile/register/", views.MobileRegisterView.as_view(), name="mobile-register"),
     path("change-password/", views.ChangePasswordView.as_view(), name="change-password"),
     path("forgot-password/", views.ForgotPasswordView.as_view(), name="forgot-password"),
+    path("forgot-username/", views.forgot_username, name="forgot-username"),
     path("reset-password/", views.ResetPasswordView.as_view(), name="reset-password"),
     path("", views.index, name="index"),
     path("users/", views.UserProfileListCreate.as_view(), name="user-view-create"),
