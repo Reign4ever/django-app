@@ -1142,6 +1142,31 @@
         }
     }
 
+
+    async function doForgotUsername() {
+    const email = document.getElementById('forgot-username-email').value.trim();
+    if (!email) {
+        setStatus('forgot-username-status', 'Email is required.', 'error');
+        return;
+    }
+    setStatus('forgot-username-status', 'Sending username...', 'info');
+    try {
+        const resp = await fetch(`${BASE_URL}/api/forgot-username/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        const data = await resp.json();
+        if (resp.ok) {
+            setStatus('forgot-username-status', 'Username sent! Check your email.', 'success');
+        } else {
+            setStatus('forgot-username-status', data.error || 'Something went wrong.', 'error');
+        }
+    } catch (e) {
+        setStatus('forgot-username-status', 'Connection error.', 'error');
+    }
+}
+
     async function doResetPassword() {
         const newPassword = document.getElementById('reset-password').value;
         const confirmPassword = document.getElementById('reset-confirm').value;
